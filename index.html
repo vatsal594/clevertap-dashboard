@@ -57,7 +57,100 @@
         >
       </div>
       <div class="navbar-right">
-        <!-- Profile dropdown removed -->
+        <div
+          class="profile-dropdown"
+          id="profile-dropdown"
+          style="display: none; position: relative"
+        >
+          <button
+            class="profile-btn"
+            id="profile-btn"
+            style="
+              display: flex;
+              align-items: center;
+              gap: 0.5em;
+              background: none;
+              border: none;
+              cursor: pointer;
+            "
+          >
+            <span
+              class="profile-avatar"
+              id="profile-avatar"
+              style="
+                width: 2em;
+                height: 2em;
+                border-radius: 50%;
+                background: #e3f2fd;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                overflow: hidden;
+                font-size: 1.2em;
+              "
+            >
+              <span class="material-icons">account_circle</span>
+            </span>
+            <span
+              id="profile-name"
+              style="font-weight: 600; font-size: 1.08em"
+            ></span>
+            <span class="material-icons" style="font-size: 1.1em"
+              >expand_more</span
+            >
+          </button>
+          <div
+            class="dropdown-content"
+            id="profile-dropdown-content"
+            style="
+              display: none;
+              position: absolute;
+              right: 0;
+              top: 110%;
+              background: #fff;
+              min-width: 170px;
+              box-shadow: 0 4px 16px rgba(25, 118, 210, 0.13);
+              border-radius: 1em;
+              border: 1px solid #e3e8ee;
+              z-index: 200;
+              padding: 0.5em 0;
+            "
+          >
+            <a
+              href="profile.html"
+              style="
+                display: flex;
+                align-items: center;
+                gap: 0.5em;
+                padding: 0.7em 1.2em;
+                font-size: 1.04em;
+                color: var(--primary);
+                text-decoration: none;
+                border-radius: 0.7em;
+                transition: background 0.18s;
+              "
+            >
+              <span class="material-icons">person</span> View Profile
+            </a>
+            <a
+              href="#"
+              id="logout-link"
+              style="
+                display: flex;
+                align-items: center;
+                gap: 0.5em;
+                padding: 0.7em 1.2em;
+                font-size: 1.04em;
+                color: var(--primary);
+                text-decoration: none;
+                border-radius: 0.7em;
+                transition: background 0.18s;
+              "
+            >
+              <span class="material-icons">logout</span> Logout
+            </a>
+          </div>
+        </div>
       </div>
     </nav>
     <main>
@@ -69,7 +162,7 @@
             powered by Firebase.
           </p>
           <div class="landing-cta">
-            <a href="auth.html" class="cta-btn">Sign Up</a>
+            <a href="auth.html#signup" class="cta-btn">Sign Up</a>
             <a href="auth.html" class="cta-btn cta-secondary">Login</a>
           </div>
         </section>

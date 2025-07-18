@@ -3,6 +3,7 @@
 
 // --- CAMPAIGN CREATION ---
 const campaignForm = document.getElementById("campaign-form");
+const campaignNextSteps = document.getElementById("campaign-next-steps");
 if (campaignForm) {
   campaignForm.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -26,6 +27,20 @@ if (campaignForm) {
       campaignForm.reset();
       loadCampaigns();
       localStorage.setItem("campaign-created", "true");
+      // Show next steps message
+      if (campaignNextSteps) {
+        campaignNextSteps.style.display = "block";
+        campaignNextSteps.innerHTML = `<strong>Next Steps:</strong><br>
+          Your campaign has been created and is listed below.<br>
+          <ul style='margin:0.7em 0 0.2em 1.2em;padding:0;list-style:disc;'>
+            <li>Push notification sending is simulated in this demo. In production, notifications would be sent to the target users or segment.</li>
+            <li>To send another campaign, fill out the form above.</li>
+            <li>To see which users will receive the notification, use the Segmentation page.</li>
+          </ul>`;
+        setTimeout(() => {
+          campaignNextSteps.style.display = "none";
+        }, 9000);
+      }
       // --- DEMO: Simulate sending notification ---
       // In production, use a backend (Cloud Function) to send to FCM tokens.
       // For demo, show how you would fetch tokens and log them:

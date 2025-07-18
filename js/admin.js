@@ -218,10 +218,9 @@ firebase.auth().onAuthStateChanged(async (user) => {
   // Fetch user doc and check role
   const userDoc = await db.collection("users").doc(user.uid).get();
   if (!userDoc.exists || userDoc.data().role !== "admin") {
-    // Option 1: Redirect to dashboard
-    window.location.href = "dashboard.html";
-    // Option 2: Show access denied (uncomment below to use)
-    // document.body.innerHTML = '<div style="text-align:center;margin-top:4em;"><h2>Access Denied</h2><p>You do not have permission to view this page.</p></div>';
+    // Show access denied message
+    document.body.innerHTML =
+      '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;text-align:center;"><span class="material-icons" style="font-size:3em;color:#d32f2f;margin-bottom:0.5em;">block</span><h2>Access Denied</h2><p>Only admins are allowed to access this page.<br>You are not an admin.</p><a href="dashboard.html" style="margin-top:1.5em;display:inline-block;padding:0.7em 2em;background:var(--primary);color:#fff;border-radius:1.5em;text-decoration:none;font-weight:600;box-shadow:0 2px 8px rgba(25,118,210,0.10);">Go to Dashboard</a></div>';
     return;
   }
   loadAdminPanel();

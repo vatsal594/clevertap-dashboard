@@ -311,36 +311,7 @@
         };
       }
       // Accessibility: Close password reset modal with Escape, focus trap
-      const resetModal = document.getElementById("reset-modal");
-      if (resetModal) {
-        resetModal.addEventListener("keydown", function (e) {
-          if (e.key === "Escape") resetModal.style.display = "none";
-        });
-        function trapFocus(modal) {
-          const focusable = modal.querySelectorAll(
-            'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-          );
-          if (!focusable.length) return;
-          const first = focusable[0];
-          const last = focusable[focusable.length - 1];
-          modal.addEventListener("keydown", function (e) {
-            if (e.key === "Tab") {
-              if (e.shiftKey) {
-                if (document.activeElement === first) {
-                  e.preventDefault();
-                  last.focus();
-                }
-              } else {
-                if (document.activeElement === last) {
-                  e.preventDefault();
-                  first.focus();
-                }
-              }
-            }
-          });
-        }
-        trapFocus(resetModal);
-      }
+      // (Password reset modal accessibility handled in js/auth.js)
     </script>
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
   </body>

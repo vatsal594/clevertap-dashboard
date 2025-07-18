@@ -126,13 +126,16 @@ window.addEventListener("DOMContentLoaded", () => {
     const authLink = document.querySelector(
       '.navbar-center a[href="auth.html"]'
     );
-    const profileDropdown = document.querySelector(".profile-dropdown");
     if (user) {
       if (authLink) authLink.style.display = "none";
-      if (profileDropdown) profileDropdown.style.display = "";
+      // Hide landing page CTA buttons if logged in
+      const landingCta = document.querySelector(".landing-cta");
+      if (landingCta) landingCta.style.display = "none";
     } else {
       if (authLink) authLink.style.display = "";
-      if (profileDropdown) profileDropdown.style.display = "none";
+      // Show landing page CTA buttons if not logged in
+      const landingCta = document.querySelector(".landing-cta");
+      if (landingCta) landingCta.style.display = "";
     }
     // Hide/show .auth-only and .user-only elements on all pages
     document.querySelectorAll(".auth-only").forEach((el) => {
@@ -193,7 +196,81 @@ window.addEventListener("DOMContentLoaded", () => {
         }
       }
     }
+
+    // Profile dropdown logic
+    var profileDropdown = document.getElementById("profile-dropdown");
+    var profileBtn = document.getElementById("profile-btn");
+    var profileName = document.getElementById("profile-name");
+    var profileDropdownContent = document.getElementById(
+      "profile-dropdown-content"
+    );
+    var profileAvatar = document.getElementById("profile-avatar");
+    var logoutLink = document.getElementById("logout-link");
+    if (user) {
+      if (profileDropdown) profileDropdown.style.display = "block";
+      if (profileName)
+        profileName.textContent =
+          user.displayName || user.name || user.email.split("@")[0] || "User";
+      if (profileAvatar)
+        profileAvatar.innerHTML =
+          '<span class="material-icons">account_circle</span>';
+      if (profileBtn && profileDropdownContent) {
+        profileBtn.onclick = function (e) {
+          e.stopPropagation();
+          profileDropdownContent.style.display =
+            profileDropdownContent.style.display === "block" ? "none" : "block";
+        };
+        document.addEventListener("click", function (e) {
+          if (!profileDropdown.contains(e.target)) {
+            profileDropdownContent.style.display = "none";
+          }
+        });
+      }
+      if (logoutLink) {
+        logoutLink.onclick = async function (e) {
+          e.preventDefault();
+          await firebase.auth().signOut();
+          window.location.href = "index.html";
+        };
+      }
+    } else {
+      if (profileDropdown) profileDropdown.style.display = "none";
+      if (profileDropdownContent) profileDropdownContent.style.display = "none";
+    }
   });
+  // Tab switching based on URL hash
+  const loginTab = document.getElementById("login-tab");
+  const signupTab = document.getElementById("signup-tab");
+  const loginFormEl = document.getElementById("login-form");
+  const signupFormEl = document.getElementById("signup-form");
+  function activateTab(tab) {
+    if (tab === "signup") {
+      if (signupTab) signupTab.classList.add("active");
+      if (loginTab) loginTab.classList.remove("active");
+      if (signupFormEl) signupFormEl.style.display = "";
+      if (loginFormEl) loginFormEl.style.display = "none";
+    } else {
+      if (loginTab) loginTab.classList.add("active");
+      if (signupTab) signupTab.classList.remove("active");
+      if (loginFormEl) loginFormEl.style.display = "";
+      if (signupFormEl) signupFormEl.style.display = "none";
+    }
+  }
+  if (window.location.hash === "#signup") {
+    activateTab("signup");
+  } else if (window.location.hash === "#login") {
+    activateTab("login");
+  }
+  if (loginTab && signupTab && loginFormEl && signupFormEl) {
+    loginTab.addEventListener("click", () => {
+      activateTab("login");
+      window.location.hash = "#login";
+    });
+    signupTab.addEventListener("click", () => {
+      activateTab("signup");
+      window.location.hash = "#signup";
+    });
+  }
 });
 
 // --- PASSWORD RESET LOGIC ---

@@ -96,10 +96,10 @@ function showAnalyticsBanner() {
 
 // --- ONBOARDING LOGIC ---
 function isProfileComplete(data) {
-  return data.name && data.gender && data.location && data.interest;
+  return data && data.name && data.gender && data.location && data.interest;
 }
 
-function showOnboardingModal(startStep = 1) {
+function showOnboardingModal(startStep = 1, user = null) {
   const modal = document.getElementById("onboarding-modal");
   const content = document.getElementById("onboarding-content");
   const nextBtn = document.getElementById("onboarding-next");
@@ -113,6 +113,29 @@ function showOnboardingModal(startStep = 1) {
   let eventTracked = false;
   let analyticsVisited = false;
 
+  // Load user profile if not provided
+  async function loadProfile() {
+    if (user) {
+      const doc = await db.collection("users").doc(user.uid).get();
+      profileData = { ...doc.data(), uid: user.uid };
+    } else {
+      // fallback: try to get from firebase.auth().currentUser
+      const u = firebase.auth().currentUser;
+      if (u) {
+        const doc = await db.collection("users").doc(u.uid).get();
+        profileData = { ...doc.data(), uid: u.uid };
+      }
+    }
+    if (!profileData)
+      profileData = {
+        name: "",
+        gender: "",
+        location: "",
+        interest: "",
+        uid: user ? user.uid : "",
+      };
+  }
+
   // Helper to update progress/checks
   function updateProgress() {
     step1Status.textContent = isProfileComplete(profileData) ? "✔️" : "";
@@ -123,6 +146,10 @@ function showOnboardingModal(startStep = 1) {
   // Helper to render step content
   function renderStep(step) {
     updateProgress();
+    let backBtnHtml =
+      step > 1
+        ? '<button id="onboarding-back" class="onboarding-back">Back</button>'
+        : "";
     if (step === 1) {
       content.innerHTML = `
         <div style="text-align:left;">
@@ -140,6 +167,7 @@ function showOnboardingModal(startStep = 1) {
             profileData.interest || ""
           }" style="width:100%;margin-bottom:0.5em;"></label>
         </div>
+        ${backBtnHtml}
       `;
       nextBtn.textContent = isProfileComplete(profileData)
         ? "Next"
@@ -151,9 +179,9 @@ function showOnboardingModal(startStep = 1) {
         <button class="onboarding-event-btn" data-event="page_view">Page View</button>
         <button class="onboarding-event-btn" data-event="product_view">Product View</button>
         <div id="onboarding-event-status" style="margin-top:0.7em;"></div>
+        ${backBtnHtml}
       `;
       nextBtn.textContent = eventTracked ? "Next" : "Track Event";
-      // Show event tracker tooltip if not already tracked
       if (!eventTracked && !localStorage.getItem("event-tracked")) {
         setTimeout(showEventTrackerTooltip, 500);
       }
@@ -161,12 +189,19 @@ function showOnboardingModal(startStep = 1) {
       content.innerHTML = `
         <p>Explore your analytics! <a href="analytics.html" target="_blank">Open Analytics Page</a></p>
         <div id="onboarding-analytics-status" style="margin-top:0.7em;"></div>
+        ${backBtnHtml}
       `;
       nextBtn.textContent = "Finish";
-      // Show analytics banner if not already visited
       if (!analyticsVisited && !localStorage.getItem("analytics-visited")) {
         setTimeout(showAnalyticsBanner, 500);
       }
+    }
+    // Add back button event
+    const backBtn = document.getElementById("onboarding-back");
+    if (backBtn) {
+      backBtn.onclick = function () {
+        if (currentStep > 1) goToStep(currentStep - 1);
+      };
     }
   }
 
@@ -196,12 +231,12 @@ function showOnboardingModal(startStep = 1) {
           .doc(profileData.uid)
           .update({ name, gender, location, interest });
         showToast("Profile updated!", "success");
+        localStorage.setItem("onboarding-profile", "true");
       } catch (e) {
         showToast("Error saving profile: " + e.message, "error");
         return;
       }
       goToStep(2);
-      // Show event tracker tooltip after profile completion
       if (!eventTracked && !localStorage.getItem("event-tracked")) {
         setTimeout(showEventTrackerTooltip, 500);
       }
@@ -212,7 +247,6 @@ function showOnboardingModal(startStep = 1) {
       }
       localStorage.setItem("event-tracked", "true");
       goToStep(3);
-      // Show analytics banner after event tracked
       if (!analyticsVisited && !localStorage.getItem("analytics-visited")) {
         setTimeout(showAnalyticsBanner, 500);
       }
@@ -273,7 +307,7 @@ function showOnboardingModal(startStep = 1) {
 
   // Show modal
   modal.style.display = "flex";
-  goToStep(currentStep);
+  loadProfile().then(() => goToStep(currentStep));
 }
 
 // --- END ONBOARDING LOGIC ---
@@ -335,6 +369,62 @@ window.addEventListener("storage", updateOnboardingChecklist);
 // In campaigns.js and segmentation.js, set 'campaign-created' and 'segment-created' in localStorage after first creation.
 // --- END ONBOARDING CHECKLIST LOGIC ---
 
+// --- PROFILE LOADING & NULL CHECKS ---
+async function loadUserProfile(user) {
+  if (!user) return null;
+  const doc = await db.collection("users").doc(user.uid).get();
+  const data = doc.data() || {};
+  return {
+    uid: user.uid,
+    name: data.name || "",
+    gender: data.gender || "",
+    location: data.location || "",
+    interest: data.interest || "",
+    email: data.email || user.email || "",
+    createdAt: data.createdAt || null,
+    role: data.role || "user",
+  };
+}
+
+// Example usage in dashboard: (replace old profile loading logic)
+window.addEventListener("DOMContentLoaded", async () => {
+  firebase.auth().onAuthStateChanged(async (user) => {
+    if (!user) return;
+    const profile = await loadUserProfile(user);
+    // Show profile info or prompt to complete profile
+    const profileSection = document.getElementById("profile-info");
+    if (profileSection) {
+      if (
+        !profile.name ||
+        !profile.gender ||
+        !profile.location ||
+        !profile.interest
+      ) {
+        profileSection.innerHTML = `<div class="profile-incomplete-card">Your profile is incomplete. <button id="complete-profile-btn">Complete Now</button></div>`;
+        document.getElementById("complete-profile-btn").onclick = () =>
+          showOnboardingModal(1, user);
+      } else {
+        profileSection.innerHTML = `<div class="profile-card">
+          <h3>Welcome, ${profile.name}!</h3>
+          <p><strong>Gender:</strong> ${profile.gender}</p>
+          <p><strong>Location:</strong> ${profile.location}</p>
+          <p><strong>Interest:</strong> ${profile.interest}</p>
+        </div>`;
+      }
+    }
+    // Show onboarding if profile incomplete and not already completed
+    if (
+      !isProfileComplete({ ...profile, uid: user.uid }) &&
+      !localStorage.getItem("onboarding-complete")
+    ) {
+      showOnboardingModal(1, user);
+    }
+    // Show recent engagement stats
+    showRecentEngagementStats(user);
+  });
+});
+// --- END PROFILE LOADING & NULL CHECKS ---
+
 // Update onAuthStateChanged to also register FCM token
 firebase.auth().onAuthStateChanged(async (user) => {
   if (!user) {
@@ -369,7 +459,7 @@ firebase.auth().onAuthStateChanged(async (user) => {
       !isProfileComplete({ ...data, uid: user.uid }) &&
       !localStorage.getItem("onboarding-complete")
     ) {
-      showOnboardingModal(1);
+      showOnboardingModal(1, user);
     }
     // Show recent engagement stats
     showRecentEngagementStats(user);
@@ -395,20 +485,22 @@ if (logoutBtn) {
   });
 }
 // Event tracker buttons
-const eventButtons = document.querySelectorAll('#event-tracker button[data-event]');
-eventButtons.forEach(btn => {
-  btn.addEventListener('click', async (e) => {
-    const eventType = btn.getAttribute('data-event');
+const eventButtons = document.querySelectorAll(
+  "#event-tracker button[data-event]"
+);
+eventButtons.forEach((btn) => {
+  btn.addEventListener("click", async (e) => {
+    const eventType = btn.getAttribute("data-event");
     try {
       showLoadingSpinner();
-      await db.collection('events').add({
+      await db.collection("events").add({
         userId: firebase.auth().currentUser.uid,
         eventType,
         timestamp: firebase.firestore.FieldValue.serverTimestamp(),
       });
-      showToast('Event tracked!', 'success');
+      showToast("Event tracked!", "success");
     } catch (err) {
-      showToast('Error tracking event: ' + err.message, 'error');
+      showToast("Error tracking event: " + err.message, "error");
     } finally {
       hideLoadingSpinner();
     }

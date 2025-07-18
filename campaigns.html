@@ -75,6 +75,36 @@
         <h2>Campaigns</h2>
         <section>
           <h2>Campaign Creator</h2>
+          <div
+            class="campaign-instructions"
+            style="
+              margin-bottom: 1em;
+              background: #f5f7fa;
+              padding: 1em 1.2em;
+              border-radius: 10px;
+              font-size: 1.08em;
+            "
+          >
+            <strong>How to use:</strong><br />
+            Create a campaign to send a push notification to a specific user or
+            a segment of users.<br />
+            <ul
+              style="margin: 0.7em 0 0.2em 1.2em; padding: 0; list-style: disc"
+            >
+              <li>
+                <b>Target Segment/User ID:</b> To target a single user, enter
+                <code>user_USERID</code> (e.g., <code>user_abc123</code>). To
+                target a segment, use <code>field=value</code> (e.g.,
+                <code>gender=male</code> or <code>location=NY</code>). You can
+                combine filters with commas (e.g.,
+                <code>gender=male,location=NY</code>).
+              </li>
+              <li>
+                After creating a campaign, you can view it in the list below.
+                (Push notification sending is simulated in this demo.)
+              </li>
+            </ul>
+          </div>
           <form id="campaign-form">
             <input
               type="text"
@@ -90,11 +120,26 @@
             <input
               type="text"
               id="campaign-segment"
-              placeholder="Target Segment/User ID"
+              placeholder="Target Segment (e.g., gender=male) or user ID (e.g., user_abc123)"
               required
             />
+            <div style="font-size: 0.98em; color: #789; margin-bottom: 0.7em">
+              Example: <code>user_abc123</code> or <code>gender=male</code> or
+              <code>gender=male,location=NY</code>
+            </div>
             <button type="submit">Send Notification</button>
           </form>
+          <div
+            id="campaign-next-steps"
+            style="
+              display: none;
+              margin-top: 1.2em;
+              background: #e3f2fd;
+              padding: 1em 1.2em;
+              border-radius: 10px;
+              font-size: 1.08em;
+            "
+          ></div>
         </section>
         <section id="campaign-list">
           <h3>All Campaigns</h3>

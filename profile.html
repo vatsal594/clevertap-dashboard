@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Profile - CleverTap Firebase Dashboard</title>
+    <link rel="stylesheet" href="css/styles.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=Roboto:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
+    <link rel="icon" type="image/svg+xml" href="css/favicon.svg" />
+  </head>
+  <body>
+    <nav class="navbar">
+      <div class="navbar-left">
+        <span class="logo">
+          <span class="material-icons" style="vertical-align: middle"
+            >dashboard</span
+          >
+          CleverTap Firebase
+        </span>
+      </div>
+      <input type="checkbox" id="navbar-toggle" class="navbar-toggle" />
+      <label for="navbar-toggle" class="navbar-burger">
+        <span class="material-icons">menu</span>
+      </label>
+      <div class="navbar-center">
+        <a href="index.html"><span class="material-icons">home</span> Home</a>
+        <a href="dashboard.html" class="user-only"
+          ><span class="material-icons">space_dashboard</span> Dashboard</a
+        >
+        <a href="analytics.html" class="user-only"
+          ><span class="material-icons">analytics</span> Analytics</a
+        >
+        <a href="campaigns.html" class="user-only"
+          ><span class="material-icons">campaign</span> Campaigns</a
+        >
+        <a href="segmentation.html" class="user-only"
+          ><span class="material-icons">group</span> Segmentation</a
+        >
+        <a href="admin.html"
+          ><span class="material-icons">admin_panel_settings</span> Admin
+          Panel</a
+        >
+      </div>
+      <div class="navbar-right">
+        <div
+          class="profile-dropdown"
+          id="profile-dropdown"
+          style="display: none; position: relative"
+        >
+          <button
+            class="profile-btn"
+            id="profile-btn"
+            style="
+              display: flex;
+              align-items: center;
+              gap: 0.5em;
+              background: none;
+              border: none;
+              cursor: pointer;
+            "
+          >
+            <span
+              class="profile-avatar"
+              id="profile-avatar"
+              style="
+                width: 2em;
+                height: 2em;
+                border-radius: 50%;
+                background: #e3f2fd;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                overflow: hidden;
+                font-size: 1.2em;
+              "
+            >
+              <span class="material-icons">account_circle</span>
+            </span>
+            <span
+              id="profile-name"
+              style="font-weight: 600; font-size: 1.08em"
+            ></span>
+            <span class="material-icons" style="font-size: 1.1em"
+              >expand_more</span
+            >
+          </button>
+          <div
+            class="dropdown-content"
+            id="profile-dropdown-content"
+            style="
+              display: none;
+              position: absolute;
+              right: 0;
+              top: 110%;
+              background: #fff;
+              min-width: 170px;
+              box-shadow: 0 4px 16px rgba(25, 118, 210, 0.13);
+              border-radius: 1em;
+              border: 1px solid #e3e8ee;
+              z-index: 200;
+              padding: 0.5em 0;
+            "
+          >
+            <a
+              href="profile.html"
+              style="
+                display: flex;
+                align-items: center;
+                gap: 0.5em;
+                padding: 0.7em 1.2em;
+                font-size: 1.04em;
+                color: var(--primary);
+                text-decoration: none;
+                border-radius: 0.7em;
+                transition: background 0.18s;
+              "
+            >
+              <span class="material-icons">person</span> View Profile
+            </a>
+            <a
+              href="#"
+              id="logout-link"
+              style="
+                display: flex;
+                align-items: center;
+                gap: 0.5em;
+                padding: 0.7em 1.2em;
+                font-size: 1.04em;
+                color: var(--primary);
+                text-decoration: none;
+                border-radius: 0.7em;
+                transition: background 0.18s;
+              "
+            >
+              <span class="material-icons">logout</span> Logout
+            </a>
+          </div>
+        </div>
+      </div>
+    </nav>
+    <main>
+      <div class="main-content">
+        <h2>
+          <span class="material-icons" style="vertical-align: middle"
+            >person</span
+          >
+          Profile
+        </h2>
+        <div
+          id="profile-card"
+          class="profile-card"
+          style="
+            max-width: 420px;
+            margin: 2em auto 0 auto;
+            padding: 2em 1.5em;
+            background: #fff;
+            border-radius: 1.2em;
+            box-shadow: 0 2px 12px rgba(25, 118, 210, 0.08);
+          "
+        >
+          <!-- Profile info will be loaded here -->
+        </div>
+        <div style="text-align: center; margin-top: 2em">
+          <button id="edit-profile-btn" class="cta-btn">Edit Profile</button>
+        </div>
+      </div>
+    </main>
+    <script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore-compat.js"></script>
+    <script src="js/firebase-config.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/utils.js"></script>
+    <script>
+      // Load and display user profile
+      firebase.auth().onAuthStateChanged(async (user) => {
+        if (!user) {
+          window.location.href = "auth.html";
+          return;
+        }
+        const doc = await db.collection("users").doc(user.uid).get();
+        const data = doc.data() || {};
+        const card = document.getElementById("profile-card");
+        card.innerHTML = `
+          <div style="display:flex;align-items:center;gap:1em;margin-bottom:1.2em;">
+            <span class="profile-avatar" style="width:3em;height:3em;border-radius:50%;background:#e3f2fd;display:flex;align-items:center;justify-content:center;overflow:hidden;font-size:2em;">
+              <span class="material-icons">account_circle</span>
+            </span>
+            <div>
+              <div style="font-size:1.25em;font-weight:700;color:var(--primary-dark);">${
+                data.name ||
+                user.displayName ||
+                user.email.split("@")[0] ||
+                "User"
+              }</div>
+              <div style="color:#789;font-size:1.05em;">${user.email}</div>
+            </div>
+          </div>
+          <div style="margin-bottom:0.7em;"><strong>Gender:</strong> ${
+            data.gender || "-"
+          }</div>
+          <div style="margin-bottom:0.7em;"><strong>Location:</strong> ${
+            data.location || "-"
+          }</div>
+          <div style="margin-bottom:0.7em;"><strong>Interest:</strong> ${
+            data.interest || "-"
+          }</div>
+        `;
+      });
+      // Edit Profile button (redirect to dashboard onboarding for now)
+      document.getElementById("edit-profile-btn").onclick = function () {
+        window.location.href = "dashboard.html";
+      };
+    </script>
+  </body>
+</html>
