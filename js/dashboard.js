@@ -41,7 +41,6 @@ async function registerFcmToken(user) {
     // Request notification permission
     const permission = await Notification.requestPermission();
     if (permission !== "granted") {
-      console.log("Notification permission not granted");
       return;
     }
     // Get FCM token
@@ -50,12 +49,12 @@ async function registerFcmToken(user) {
         "BNaj1dwLgt8WZqNGcX3bBW8t_3gFEXIn5SORZq0HeFYyQ-dlU5SX_NgV7wYa89NaCItU3Elg3ywvez4OikNSBKU",
     });
     if (!token) {
-      console.log("No FCM token received");
       return;
     }
+    // Log the FCM token for debugging
+    console.log("FCM Token:", token);
     // Save token to Firestore user doc
     await db.collection("users").doc(user.uid).update({ fcmToken: token });
-    console.log("FCM token saved to Firestore:", token);
   } catch (error) {
     console.log("Error getting FCM token:", error);
   }
@@ -94,223 +93,9 @@ function showAnalyticsBanner() {
 }
 // --- END CONTEXTUAL TIPS LOGIC ---
 
-// --- ONBOARDING LOGIC ---
-function isProfileComplete(data) {
-  return data && data.name && data.gender && data.location && data.interest;
-}
-
-function showOnboardingModal(startStep = 1, user = null) {
-  const modal = document.getElementById("onboarding-modal");
-  const content = document.getElementById("onboarding-content");
-  const nextBtn = document.getElementById("onboarding-next");
-  const closeBtn = document.getElementById("onboarding-close");
-  const helpBtn = document.getElementById("onboarding-help");
-  const step1Status = document.getElementById("step1-status");
-  const step2Status = document.getElementById("step2-status");
-  const step3Status = document.getElementById("step3-status");
-  let currentStep = startStep;
-  let profileData = null;
-  let eventTracked = false;
-  let analyticsVisited = false;
-
-  // Load user profile if not provided
-  async function loadProfile() {
-    if (user) {
-      const doc = await db.collection("users").doc(user.uid).get();
-      profileData = { ...doc.data(), uid: user.uid };
-    } else {
-      // fallback: try to get from firebase.auth().currentUser
-      const u = firebase.auth().currentUser;
-      if (u) {
-        const doc = await db.collection("users").doc(u.uid).get();
-        profileData = { ...doc.data(), uid: u.uid };
-      }
-    }
-    if (!profileData)
-      profileData = {
-        name: "",
-        gender: "",
-        location: "",
-        interest: "",
-        uid: user ? user.uid : "",
-      };
-  }
-
-  // Helper to update progress/checks
-  function updateProgress() {
-    step1Status.textContent = isProfileComplete(profileData) ? "✔️" : "";
-    step2Status.textContent = eventTracked ? "✔️" : "";
-    step3Status.textContent = analyticsVisited ? "✔️" : "";
-  }
-
-  // Helper to render step content
-  function renderStep(step) {
-    updateProgress();
-    let backBtnHtml =
-      step > 1
-        ? '<button id="onboarding-back" class="onboarding-back">Back</button>'
-        : "";
-    if (step === 1) {
-      content.innerHTML = `
-        <div style="text-align:left;">
-          <p>Let’s complete your profile for a personalized experience.</p>
-          <label>Name:<br><input id="onboard-name" type="text" value="${
-            profileData.name || ""
-          }" style="width:100%;margin-bottom:0.5em;"></label><br>
-          <label>Gender:<br><input id="onboard-gender" type="text" value="${
-            profileData.gender || ""
-          }" style="width:100%;margin-bottom:0.5em;"></label><br>
-          <label>Location:<br><input id="onboard-location" type="text" value="${
-            profileData.location || ""
-          }" style="width:100%;margin-bottom:0.5em;"></label><br>
-          <label>Interest:<br><input id="onboard-interest" type="text" value="${
-            profileData.interest || ""
-          }" style="width:100%;margin-bottom:0.5em;"></label>
-        </div>
-        ${backBtnHtml}
-      `;
-      nextBtn.textContent = isProfileComplete(profileData)
-        ? "Next"
-        : "Save & Next";
-    } else if (step === 2) {
-      content.innerHTML = `
-        <p>Track your first event! Click a button below to send an event:</p>
-        <button class="onboarding-event-btn" data-event="button_click">Button Click</button>
-        <button class="onboarding-event-btn" data-event="page_view">Page View</button>
-        <button class="onboarding-event-btn" data-event="product_view">Product View</button>
-        <div id="onboarding-event-status" style="margin-top:0.7em;"></div>
-        ${backBtnHtml}
-      `;
-      nextBtn.textContent = eventTracked ? "Next" : "Track Event";
-      if (!eventTracked && !localStorage.getItem("event-tracked")) {
-        setTimeout(showEventTrackerTooltip, 500);
-      }
-    } else if (step === 3) {
-      content.innerHTML = `
-        <p>Explore your analytics! <a href="analytics.html" target="_blank">Open Analytics Page</a></p>
-        <div id="onboarding-analytics-status" style="margin-top:0.7em;"></div>
-        ${backBtnHtml}
-      `;
-      nextBtn.textContent = "Finish";
-      if (!analyticsVisited && !localStorage.getItem("analytics-visited")) {
-        setTimeout(showAnalyticsBanner, 500);
-      }
-    }
-    // Add back button event
-    const backBtn = document.getElementById("onboarding-back");
-    if (backBtn) {
-      backBtn.onclick = function () {
-        if (currentStep > 1) goToStep(currentStep - 1);
-      };
-    }
-  }
-
-  // Step navigation
-  function goToStep(step) {
-    currentStep = step;
-    renderStep(step);
-  }
-
-  // Next button logic
-  nextBtn.onclick = async function () {
-    if (currentStep === 1) {
-      // Save profile
-      const name = document.getElementById("onboard-name").value.trim();
-      const gender = document.getElementById("onboard-gender").value.trim();
-      const location = document.getElementById("onboard-location").value.trim();
-      const interest = document.getElementById("onboard-interest").value.trim();
-      profileData = { ...profileData, name, gender, location, interest };
-      if (!isProfileComplete(profileData)) {
-        showToast("Please complete all fields.", "error");
-        return;
-      }
-      // Save to Firestore
-      try {
-        await db
-          .collection("users")
-          .doc(profileData.uid)
-          .update({ name, gender, location, interest });
-        showToast("Profile updated!", "success");
-        localStorage.setItem("onboarding-profile", "true");
-      } catch (e) {
-        showToast("Error saving profile: " + e.message, "error");
-        return;
-      }
-      goToStep(2);
-      if (!eventTracked && !localStorage.getItem("event-tracked")) {
-        setTimeout(showEventTrackerTooltip, 500);
-      }
-    } else if (currentStep === 2) {
-      if (!eventTracked) {
-        showToast("Please track an event to continue.", "error");
-        return;
-      }
-      localStorage.setItem("event-tracked", "true");
-      goToStep(3);
-      if (!analyticsVisited && !localStorage.getItem("analytics-visited")) {
-        setTimeout(showAnalyticsBanner, 500);
-      }
-    } else if (currentStep === 3) {
-      analyticsVisited = true;
-      localStorage.setItem("analytics-visited", "true");
-      updateProgress();
-      modal.style.display = "none";
-      localStorage.setItem("onboarding-complete", "true");
-      showToast("Onboarding complete! 🎉", "success");
-    }
-  };
-
-  // Event tracking logic for onboarding
-  content.onclick = async function (e) {
-    if (e.target.classList.contains("onboarding-event-btn")) {
-      const eventType = e.target.getAttribute("data-event");
-      try {
-        await db.collection("events").add({
-          userId: profileData.uid,
-          eventType,
-          timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-        });
-        eventTracked = true;
-        document.getElementById("onboarding-event-status").textContent =
-          "Event tracked! ✔️";
-        updateProgress();
-        nextBtn.textContent = "Next";
-        showToast("Event tracked!", "success");
-      } catch (err) {
-        showToast("Error tracking event: " + err.message, "error");
-      }
-    }
-  };
-
-  // Analytics step: detect if user visits analytics page
-  if (currentStep === 3) {
-    window.addEventListener("focus", function handler() {
-      if (window.location.pathname.endsWith("dashboard.html")) {
-        analyticsVisited = true;
-        updateProgress();
-        document.getElementById("onboarding-analytics-status").textContent =
-          "Analytics visited! ✔️";
-        window.removeEventListener("focus", handler);
-      }
-    });
-  }
-
-  // Close modal logic
-  closeBtn.onclick = function () {
-    modal.style.display = "none";
-  };
-  // Help button logic
-  helpBtn.onclick = function () {
-    modal.style.display = "flex";
-    goToStep(1);
-  };
-
-  // Show modal
-  modal.style.display = "flex";
-  loadProfile().then(() => goToStep(currentStep));
-}
-
-// --- END ONBOARDING LOGIC ---
+// --- REMOVE ONBOARDING LOGIC ---
+// (All onboarding modal logic and references removed)
+// --- END REMOVE ONBOARDING LOGIC ---
 
 // --- ONBOARDING CHECKLIST LOGIC ---
 function updateOnboardingChecklist() {
@@ -394,30 +179,150 @@ window.addEventListener("DOMContentLoaded", async () => {
     // Show profile info or prompt to complete profile
     const profileSection = document.getElementById("profile-info");
     if (profileSection) {
-      if (
-        !profile.name ||
-        !profile.gender ||
-        !profile.location ||
-        !profile.interest
-      ) {
-        profileSection.innerHTML = `<div class="profile-incomplete-card">Your profile is incomplete. <button id="complete-profile-btn">Complete Now</button></div>`;
-        document.getElementById("complete-profile-btn").onclick = () =>
-          showOnboardingModal(1, user);
+      if (!profile.gender || !profile.location || !profile.interest) {
+        profileSection.innerHTML = `
+          <div class="profile-incomplete-card" style="max-width:420px;margin:2em auto 0 auto;padding:2em 1.5em;background:#fff;border-radius:1.2em;box-shadow:0 2px 12px rgba(25,118,210,0.08);">
+            <h3>Complete Your Profile</h3>
+            <form id="complete-profile-form">
+              <div style="margin-bottom:1em;">
+                <label>Gender:<br><input id="profile-gender" type="text" value="${
+                  profile.gender || ""
+                }" style="width:100%;margin-bottom:0.5em;"></label>
+              </div>
+              <div style="margin-bottom:1em;">
+                <label>Location:<br><input id="profile-location" type="text" value="${
+                  profile.location || ""
+                }" style="width:100%;margin-bottom:0.5em;"></label>
+              </div>
+              <div style="margin-bottom:1em;">
+                <label>Interest:<br><input id="profile-interest" type="text" value="${
+                  profile.interest || ""
+                }" style="width:100%;margin-bottom:0.5em;"></label>
+              </div>
+              <button type="submit" class="cta-btn">Save</button>
+            </form>
+          </div>
+        `;
+        document.getElementById("complete-profile-form").onsubmit =
+          async function (e) {
+            e.preventDefault();
+            const gender = document
+              .getElementById("profile-gender")
+              .value.trim();
+            const location = document
+              .getElementById("profile-location")
+              .value.trim();
+            const interest = document
+              .getElementById("profile-interest")
+              .value.trim();
+            if (!gender || !location || !interest) {
+              showToast("Please fill in all fields.", "error");
+              return;
+            }
+            try {
+              await db
+                .collection("users")
+                .doc(user.uid)
+                .update({ gender, location, interest });
+              showToast("Profile updated!", "success");
+              // Reload profile info
+              const updatedProfile = await loadUserProfile(user);
+              profileSection.innerHTML = `<div class=\"profile-card\">
+              <h3>Welcome, ${updatedProfile.name}!</h3>
+              <p><strong>Gender:</strong> ${updatedProfile.gender}</p>
+              <p><strong>Location:</strong> ${updatedProfile.location}</p>
+              <p><strong>Interest:</strong> ${updatedProfile.interest}</p>
+            </div>`;
+            } catch (err) {
+              showToast("Error updating profile: " + err.message, "error");
+            }
+          };
       } else {
+        // Show profile card with Edit Details button
         profileSection.innerHTML = `<div class="profile-card">
           <h3>Welcome, ${profile.name}!</h3>
           <p><strong>Gender:</strong> ${profile.gender}</p>
           <p><strong>Location:</strong> ${profile.location}</p>
           <p><strong>Interest:</strong> ${profile.interest}</p>
+          <button id="edit-profile-btn" class="cta-btn" style="margin-top:1.2em;">Edit Details</button>
         </div>`;
+        // Add edit button logic
+        document.getElementById("edit-profile-btn").onclick = function () {
+          profileSection.innerHTML = `
+            <div class="profile-incomplete-card" style="max-width:420px;margin:2em auto 0 auto;padding:2em 1.5em;background:#fff;border-radius:1.2em;box-shadow:0 2px 12px rgba(25,118,210,0.08);">
+              <h3>Edit Your Details</h3>
+              <form id="edit-profile-form">
+                <div style="margin-bottom:1em;">
+                  <label>Name:<br><input id="edit-profile-name" type="text" value="${
+                    profile.name || ""
+                  }" style="width:100%;margin-bottom:0.5em;"></label>
+                </div>
+                <div style="margin-bottom:1em;">
+                  <label>Gender:<br><input id="edit-profile-gender" type="text" value="${
+                    profile.gender || ""
+                  }" style="width:100%;margin-bottom:0.5em;"></label>
+                </div>
+                <div style="margin-bottom:1em;">
+                  <label>Location:<br><input id="edit-profile-location" type="text" value="${
+                    profile.location || ""
+                  }" style="width:100%;margin-bottom:0.5em;"></label>
+                </div>
+                <div style="margin-bottom:1em;">
+                  <label>Interest:<br><input id="edit-profile-interest" type="text" value="${
+                    profile.interest || ""
+                  }" style="width:100%;margin-bottom:0.5em;"></label>
+                </div>
+                <button type="submit" class="cta-btn">Save</button>
+                <button type="button" id="cancel-edit-profile" class="cta-btn cta-secondary" style="margin-left:0.7em;">Cancel</button>
+              </form>
+            </div>
+          `;
+          document.getElementById("edit-profile-form").onsubmit =
+            async function (e) {
+              e.preventDefault();
+              const name = document
+                .getElementById("edit-profile-name")
+                .value.trim();
+              const gender = document
+                .getElementById("edit-profile-gender")
+                .value.trim();
+              const location = document
+                .getElementById("edit-profile-location")
+                .value.trim();
+              const interest = document
+                .getElementById("edit-profile-interest")
+                .value.trim();
+              if (!name || !gender || !location || !interest) {
+                showToast("Please fill in all fields.", "error");
+                return;
+              }
+              try {
+                await db
+                  .collection("users")
+                  .doc(user.uid)
+                  .update({ name, gender, location, interest });
+                showToast("Profile updated!", "success");
+                // Reload profile info
+                const updatedProfile = await loadUserProfile(user);
+                profileSection.innerHTML = `<div class=\"profile-card\">\n          <h3>Welcome, ${updatedProfile.name}!<\/h3>\n          <p><strong>Gender:<\/strong> ${updatedProfile.gender}<\/p>\n          <p><strong>Location:<\/strong> ${updatedProfile.location}<\/p>\n          <p><strong>Interest:<\/strong> ${updatedProfile.interest}<\/p>\n          <button id=\"edit-profile-btn\" class=\"cta-btn\" style=\"margin-top:1.2em;\">Edit Details<\/button>\n        <\/div>`;
+                // Re-attach edit button logic
+                document.getElementById("edit-profile-btn").onclick =
+                  arguments.callee;
+              } catch (err) {
+                showToast("Error updating profile: " + err.message, "error");
+              }
+            };
+          document.getElementById("cancel-edit-profile").onclick =
+            async function () {
+              // Reload profile info without saving
+              const updatedProfile = await loadUserProfile(user);
+              profileSection.innerHTML = `<div class=\"profile-card\">\n          <h3>Welcome, ${updatedProfile.name}!<\/h3>\n          <p><strong>Gender:<\/strong> ${updatedProfile.gender}<\/p>\n          <p><strong>Location:<\/strong> ${updatedProfile.location}<\/p>\n          <p><strong>Interest:<\/strong> ${updatedProfile.interest}<\/p>\n          <button id=\"edit-profile-btn\" class=\"cta-btn\" style=\"margin-top:1.2em;\">Edit Details<\/button>\n        <\/div>`;
+              // Re-attach edit button logic
+              document.getElementById("edit-profile-btn").onclick =
+                arguments.callee;
+            };
+        };
       }
-    }
-    // Show onboarding if profile incomplete and not already completed
-    if (
-      !isProfileComplete({ ...profile, uid: user.uid }) &&
-      !localStorage.getItem("onboarding-complete")
-    ) {
-      showOnboardingModal(1, user);
     }
     // Show recent engagement stats
     showRecentEngagementStats(user);
@@ -454,13 +359,6 @@ firebase.auth().onAuthStateChanged(async (user) => {
         <li><strong>Interest:</strong> ${data.interest || ""}</li>
       </ul>
     `;
-    // Show onboarding if profile incomplete and not already completed
-    if (
-      !isProfileComplete({ ...data, uid: user.uid }) &&
-      !localStorage.getItem("onboarding-complete")
-    ) {
-      showOnboardingModal(1, user);
-    }
     // Show recent engagement stats
     showRecentEngagementStats(user);
   } catch (error) {

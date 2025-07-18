@@ -2333,3 +2333,64 @@ nav .material-icons {
     padding: 0.7em 0 0.6em 0;
   }
 }
+
+/* Profile Completion Card UI */
+.profile-incomplete-card {
+  max-width: 340px;
+  margin: 2em auto 0 auto;
+  padding: 1.2em 1em 1em 1em;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgba(25, 118, 210, 0.06);
+  border: 1px solid var(--border);
+  text-align: left;
+}
+.profile-incomplete-card h3 {
+  text-align: center;
+  color: var(--primary);
+  font-size: 1.08em;
+  font-weight: 600;
+  margin-bottom: 0.7em;
+}
+.profile-incomplete-card label {
+  font-weight: 500;
+  color: var(--primary-dark);
+  font-size: 1em;
+}
+.profile-incomplete-card input[type="text"] {
+  width: 100%;
+  padding: 0.5em 0.7em;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  font-size: 0.98em;
+  background: #f9f9f9;
+  color: var(--text);
+  margin-top: 0.2em;
+  margin-bottom: 0.5em;
+  box-shadow: none;
+}
+.profile-incomplete-card input[type="text"]:focus {
+  border-color: var(--primary);
+  outline: none;
+}
+.profile-incomplete-card .cta-btn {
+  width: auto;
+  min-width: 90px;
+  padding: 0.5em 1.2em;
+  font-size: 1em;
+  border-radius: 5px;
+  margin-top: 0.5em;
+  margin-bottom: 0;
+  box-shadow: none;
+}
+.profile-incomplete-card .cta-btn.cta-secondary {
+  background: #f5f7fa;
+  color: var(--primary);
+  border: 1px solid var(--primary);
+}
+@media (max-width: 700px) {
+  .profile-incomplete-card {
+    padding: 0.7em 0.3em 0.7em 0.3em;
+    max-width: 98vw;
+  }
+}

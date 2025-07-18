@@ -114,7 +114,7 @@ async function loadAdminPanel() {
             <div style='display:flex;align-items:center;gap:0.3em;margin-top:0.5em;'>
               <button class='admin-copy-campaign-tokens' data-campaign-id='${
                 doc.id
-              }' aria-label='Copy all FCM tokens'><span class='material-icons' style='font-size:1.1em;'>content_copy</span> Copy All Tokens</button>
+              }' aria-label='Copy all FCM tokens' style='background:none;border:none;box-shadow:none;padding:0.2em 0.4em;border-radius:6px;cursor:pointer;'><span class='material-icons' style='font-size:1.1em;'>content_copy</span></button>
               <button class='admin-delete-campaign' data-id='${
                 doc.id
               }' aria-label='Delete campaign'><span class='material-icons'>delete</span></button>
@@ -123,6 +123,66 @@ async function loadAdminPanel() {
         });
         html += "</ul>";
         campaignsDiv.innerHTML = html;
+        // Attach copy event listeners after rendering
+        document
+          .querySelectorAll(".admin-copy-campaign-tokens")
+          .forEach((btn) => {
+            btn.addEventListener("click", async function () {
+              const campaignId = btn.getAttribute("data-campaign-id");
+              // Find the campaign doc
+              const campDoc = await db
+                .collection("campaigns")
+                .doc(campaignId)
+                .get();
+              if (!campDoc.exists) return;
+              const c = campDoc.data();
+              let tokens = [];
+              if (c.target && c.target.startsWith("user_")) {
+                // Single user
+                const userId = c.target.replace("user_", "");
+                const userDoc = await db.collection("users").doc(userId).get();
+                if (userDoc.exists && userDoc.data().fcmToken) {
+                  tokens.push(userDoc.data().fcmToken);
+                }
+              } else if (c.target) {
+                // Segment
+                const filters = c.target
+                  .split(",")
+                  .map((pair) => pair.split("=").map((s) => s.trim()));
+                let ref = db.collection("users");
+                filters.forEach(([field, value]) => {
+                  if (field && value) ref = ref.where(field, "==", value);
+                });
+                const snapshot = await ref.get();
+                snapshot.forEach((doc) => {
+                  const user = doc.data();
+                  if (user.fcmToken) tokens.push(user.fcmToken);
+                });
+              }
+              if (tokens.length) {
+                try {
+                  await navigator.clipboard.writeText(tokens.join(", "));
+                  btn.innerHTML =
+                    '<span class="material-icons" style="font-size:1.1em;">check</span>';
+                  setTimeout(() => {
+                    btn.innerHTML =
+                      '<span class="material-icons" style="font-size:1.1em;">content_copy</span>';
+                  }, 1200);
+                  if (typeof showToast === "function") {
+                    showToast("All FCM tokens copied!", "success");
+                  }
+                } catch (err) {
+                  if (typeof showToast === "function") {
+                    showToast("Failed to copy tokens.", "error");
+                  }
+                }
+              } else {
+                if (typeof showToast === "function") {
+                  showToast("No FCM tokens found for this campaign.", "info");
+                }
+              }
+            });
+          });
       }
     } catch (error) {
       campaignsDiv.innerHTML =
