@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Auth - CleverTap Firebase Dashboard</title>
+    <link rel="stylesheet" href="css/styles.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=Roboto:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
+    <link rel="icon" type="image/svg+xml" href="css/favicon.svg" />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css"
+    />
+  </head>
+  <body>
+    <div id="global-loading-spinner"><div class="global-spinner"></div></div>
+    <nav class="navbar">
+      <div class="navbar-left">
+        <span class="logo">
+          <span class="material-icons" style="vertical-align: middle"
+            >dashboard</span
+          >
+          CleverTap Firebase
+        </span>
+      </div>
+      <input type="checkbox" id="navbar-toggle" class="navbar-toggle" />
+      <label for="navbar-toggle" class="navbar-burger">
+        <span class="material-icons">menu</span>
+      </label>
+      <div class="navbar-center">
+        <a href="index.html"><span class="material-icons">home</span> Home</a>
+        <a href="auth.html" class="auth-only active"
+          ><span class="material-icons">login</span> Auth</a
+        >
+        <a href="dashboard.html" class="user-only"
+          ><span class="material-icons">space_dashboard</span> Dashboard</a
+        >
+        <a href="analytics.html" class="user-only"
+          ><span class="material-icons">analytics</span> Analytics</a
+        >
+        <a href="campaigns.html" class="user-only"
+          ><span class="material-icons">campaign</span> Campaigns</a
+        >
+        <a href="segmentation.html" class="user-only"
+          ><span class="material-icons">group</span> Segmentation</a
+        >
+        <a href="admin.html"
+          ><span class="material-icons">admin_panel_settings</span> Admin
+          Panel</a
+        >
+      </div>
+      <div class="navbar-right">
+        <!-- Profile dropdown removed -->
+      </div>
+    </nav>
+    <main>
+      <div id="auth-main">
+        <div id="already-logged-in" style="display: none">
+          <span class="material-icons">account_circle</span>
+          <div id="logged-in-name">User</div>
+          <div id="logged-in-email">user@email.com</div>
+          <button id="auth-logout-btn">Log out</button>
+        </div>
+        <div id="auth-content">
+          <div id="auth-main-content">
+            <div id="auth-tabs">
+              <button id="login-tab">Login</button>
+              <button id="signup-tab">Sign Up</button>
+            </div>
+            <form id="login-form">
+              <div>
+                <span class="material-icons">mail</span>
+                <input
+                  type="email"
+                  id="login-email"
+                  placeholder="Email"
+                  required
+                />
+              </div>
+              <div>
+                <span class="material-icons">lock</span>
+                <input
+                  type="password"
+                  id="login-password"
+                  placeholder="Password"
+                  required
+                />
+              </div>
+              <button type="submit">Login</button>
+              <button id="google-signin-login" type="button">
+                <span
+                  ><svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="22"
+                    height="22"
+                    viewBox="0 0 48 48"
+                  >
+                    <g>
+                      <path
+                        fill="#4285F4"
+                        d="M43.611 20.083H42V20H24v8h11.303c-1.627 4.657-6.084 8-11.303 8-6.627 0-12-5.373-12-12s5.373-12 12-12c2.773 0 5.313.98 7.313 2.594l6.594-6.594C34.125 5.266 29.313 3 24 3 12.954 3 4 11.954 4 23s8.954 20 20 20c11.046 0 20-8.954 20-20 0-1.313-.138-2.604-.389-3.917z"
+                      />
+                      <path
+                        fill="#34A853"
+                        d="M6.306 14.691l6.571 4.819C14.54 16.104 18.961 13 24 13c2.773 0 5.313.98 7.313 2.594l6.594-6.594C34.125 5.266 29.313 3 24 3c-7.797 0-14.633 4.438-18.027 10.934l.333.757z"
+                      />
+                      <path
+                        fill="#FBBC05"
+                        d="M24 43c5.084 0 9.797-1.75 13.438-4.75l-6.188-5.063C29.313 35.02 26.773 36 24 36c-5.197 0-9.625-3.313-11.25-7.938l-6.5 5.016C9.313 40.438 16.149 45 24 45z"
+                      />
+                      <path
+                        fill="#EA4335"
+                        d="M43.611 20.083H42V20H24v8h11.303c-.75 2.146-2.188 4.021-4.063 5.188l.001-.001 6.188 5.063C39.813 40.25 44 36 44 24c0-1.313-.138-2.604-.389-3.917z"
+                      />
+                    </g></svg
+                ></span>
+                Sign in with Google
+              </button>
+              <div>
+                <a href="#" id="forgot-password-link">Forgot password?</a>
+              </div>
+            </form>
+            <form id="signup-form" style="display: none">
+              <div>
+                <span class="material-icons">person</span>
+                <input
+                  type="text"
+                  id="signup-name"
+                  placeholder="Name"
+                  required
+                />
+              </div>
+              <div>
+                <span class="material-icons">wc</span>
+                <select id="signup-gender" required>
+                  <option value="">Gender</option>
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+              <div>
+                <span class="material-icons">location_on</span>
+                <input
+                  type="text"
+                  id="signup-location"
+                  placeholder="Location"
+                  required
+                />
+              </div>
+              <div>
+                <span class="material-icons">star</span>
+                <input
+                  type="text"
+                  id="signup-interest"
+                  placeholder="Interest"
+                  required
+                />
+              </div>
+              <div>
+                <span class="material-icons">mail</span>
+                <input
+                  type="email"
+                  id="signup-email"
+                  placeholder="Email"
+                  required
+                />
+              </div>
+              <div>
+                <span class="material-icons">lock</span>
+                <input
+                  type="password"
+                  id="signup-password"
+                  placeholder="Password"
+                  required
+                />
+              </div>
+              <button type="submit">Sign Up</button>
+              <button id="google-signin-signup" type="button">
+                <span
+                  ><svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="22"
+                    height="22"
+                    viewBox="0 0 48 48"
+                  >
+                    <g>
+                      <path
+                        fill="#4285F4"
+                        d="M43.611 20.083H42V20H24v8h11.303c-1.627 4.657-6.084 8-11.303 8-6.627 0-12-5.373-12-12s5.373-12 12-12c2.773 0 5.313.98 7.313 2.594l6.594-6.594C34.125 5.266 29.313 3 24 3 12.954 3 4 11.954 4 23s8.954 20 20 20c11.046 0 20-8.954 20-20 0-1.313-.138-2.604-.389-3.917z"
+                      />
+                      <path
+                        fill="#34A853"
+                        d="M6.306 14.691l6.571 4.819C14.54 16.104 18.961 13 24 13c2.773 0 5.313.98 7.313 2.594l6.594-6.594C34.125 5.266 29.313 3 24 3c-7.797 0-14.633 4.438-18.027 10.934l.333.757z"
+                      />
+                      <path
+                        fill="#FBBC05"
+                        d="M24 43c5.084 0 9.797-1.75 13.438-4.75l-6.188-5.063C29.313 35.02 26.773 36 24 36c-5.197 0-9.625-3.313-11.25-7.938l-6.5 5.016C9.313 40.438 16.149 45 24 45z"
+                      />
+                      <path
+                        fill="#EA4335"
+                        d="M43.611 20.083H42V20H24v8h11.303c-.75 2.146-2.188 4.021-4.063 5.188l.001-.001 6.188 5.063C39.813 40.25 44 36 44 24c0-1.313-.138-2.604-.389-3.917z"
+                      />
+                    </g></svg
+                ></span>
+                Sign up with Google
+              </button>
+            </form>
+          </div>
+          <!-- Password Reset Modal -->
+          <div
+            id="reset-modal"
+            class="onboarding-modal"
+            style="display: none"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="reset-title"
+            tabindex="-1"
+          >
+            <div class="onboarding-modal-content">
+              <button
+                class="onboarding-close"
+                id="reset-close"
+                title="Close"
+                aria-label="Close Password Reset"
+              >
+                &times;
+              </button>
+              <h3 id="reset-title" style="margin-bottom: 1em">
+                Reset Password
+              </h3>
+              <form id="reset-form">
+                <input
+                  type="email"
+                  id="reset-email"
+                  placeholder="Enter your email"
+                  required
+                  style="
+                    width: 100%;
+                    padding: 0.7em 1em;
+                    margin-bottom: 1em;
+                    border-radius: 7px;
+                    border: 1px solid var(--border);
+                    font-size: 1em;
+                  "
+                />
+                <button
+                  type="submit"
+                  class="onboarding-next"
+                  style="width: 100%"
+                >
+                  Send Reset Link
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+    <button
+      id="onboarding-help"
+      class="onboarding-help"
+      title="Show onboarding"
+    >
+      ❓
+    </button>
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-messaging-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-analytics-compat.js"></script>
+    <script src="js/firebase-config.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/utils.js"></script>
+    <script>
+      // Highlight active nav link
+      const navLinks = document.querySelectorAll(".navbar-center a");
+      navLinks.forEach((link) => {
+        if (window.location.pathname.endsWith(link.getAttribute("href"))) {
+          link.classList.add("active");
+        }
+      });
+      // Hamburger menu logic
+      const navbarToggle = document.getElementById("navbar-toggle");
+      const navbarCenter = document.querySelector(".navbar-center");
+      navbarToggle.addEventListener("change", function () {
+        navbarCenter.classList.toggle("show", this.checked);
+      });
+      // Floating Help Button Logic
+      const helpFab = document.getElementById("help-fab");
+      const helpModal = document.getElementById("help-modal");
+      const helpClose = document.getElementById("help-close");
+      if (helpFab && helpModal && helpClose) {
+        helpFab.onclick = () => {
+          helpModal.style.display = "flex";
+        };
+        helpClose.onclick = () => {
+          helpModal.style.display = "none";
+        };
+        helpModal.onclick = (e) => {
+          if (e.target === helpModal) helpModal.style.display = "none";
+        };
+      }
+      // Accessibility: Close password reset modal with Escape, focus trap
+      const resetModal = document.getElementById("reset-modal");
+      if (resetModal) {
+        resetModal.addEventListener("keydown", function (e) {
+          if (e.key === "Escape") resetModal.style.display = "none";
+        });
+        function trapFocus(modal) {
+          const focusable = modal.querySelectorAll(
+            'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+          );
+          if (!focusable.length) return;
+          const first = focusable[0];
+          const last = focusable[focusable.length - 1];
+          modal.addEventListener("keydown", function (e) {
+            if (e.key === "Tab") {
+              if (e.shiftKey) {
+                if (document.activeElement === first) {
+                  e.preventDefault();
+                  last.focus();
+                }
+              } else {
+                if (document.activeElement === last) {
+                  e.preventDefault();
+                  first.focus();
+                }
+              }
+            }
+          });
+        }
+        trapFocus(resetModal);
+      }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+  </body>
+</html>

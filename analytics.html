@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Analytics - CleverTap Firebase Dashboard</title>
+    <link rel="stylesheet" href="css/styles.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=Roboto:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
+    <link rel="icon" type="image/svg+xml" href="css/favicon.svg" />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css"
+    />
+  </head>
+  <body>
+    <div id="global-loading-spinner"><div class="global-spinner"></div></div>
+    <nav class="navbar">
+      <div class="navbar-left">
+        <span class="logo">
+          <span class="material-icons" style="vertical-align: middle"
+            >dashboard</span
+          >
+          CleverTap Firebase
+        </span>
+      </div>
+      <input type="checkbox" id="navbar-toggle" class="navbar-toggle" />
+      <label for="navbar-toggle" class="navbar-burger">
+        <span class="material-icons">menu</span>
+      </label>
+      <div class="navbar-center">
+        <a href="index.html"><span class="material-icons">home</span> Home</a>
+        <a href="auth.html" class="auth-only"
+          ><span class="material-icons">login</span> Auth</a
+        >
+        <a href="dashboard.html"
+          ><span class="material-icons">space_dashboard</span> Dashboard</a
+        >
+        <a href="analytics.html"
+          ><span class="material-icons">analytics</span> Analytics</a
+        >
+        <a href="campaigns.html"
+          ><span class="material-icons">campaign</span> Campaigns</a
+        >
+        <a href="segmentation.html"
+          ><span class="material-icons">group</span> Segmentation</a
+        >
+        <a href="admin.html"
+          ><span class="material-icons">admin_panel_settings</span> Admin
+          Panel</a
+        >
+      </div>
+      <div class="navbar-right">
+        <!-- Profile dropdown removed -->
+      </div>
+    </nav>
+    <main>
+      <div class="analytics-main-content">
+        <div
+          class="analytics-summary-cards"
+          style="
+            display: flex;
+            gap: 1.2em;
+            margin-bottom: 2em;
+            flex-wrap: wrap;
+            justify-content: center;
+          "
+        >
+          <div class="summary-card" title="Total number of registered users">
+            <span
+              class="material-icons"
+              style="color: var(--primary); font-size: 2em"
+              >groups</span
+            >
+            <div class="summary-value" id="summary-total-users">-</div>
+            <div class="summary-label">Total Users</div>
+          </div>
+          <div class="summary-card" title="Users active in the last 7 days">
+            <span
+              class="material-icons"
+              style="color: var(--primary); font-size: 2em"
+              >person</span
+            >
+            <div class="summary-value" id="summary-active-users">-</div>
+            <div class="summary-label">Active This Week</div>
+          </div>
+          <div class="summary-card" title="Number of events tracked today">
+            <span
+              class="material-icons"
+              style="color: var(--primary); font-size: 2em"
+              >event</span
+            >
+            <div class="summary-value" id="summary-events-today">-</div>
+            <div class="summary-label">Events Today</div>
+          </div>
+          <div
+            class="summary-card"
+            title="Day 1 retention: % of new users who returned the next day"
+          >
+            <span
+              class="material-icons"
+              style="color: var(--primary); font-size: 2em"
+              >trending_up</span
+            >
+            <div class="summary-value" id="summary-retention">-</div>
+            <div class="summary-label">Day 1 Retention</div>
+          </div>
+        </div>
+        <div
+          id="analytics-welcome-banner"
+          class="contextual-banner"
+          style="display: none; margin-bottom: 1.2em"
+        >
+          <span
+            >Welcome to Analytics! Here you can explore your user data, events,
+            funnels, and retention. 🎉</span
+          >
+        </div>
+        <h2>Analytics</h2>
+        <section role="region" aria-label="Active Users">
+          <h3>Active Users</h3>
+          <canvas id="activeUsersChart"></canvas>
+        </section>
+        <section role="region" aria-label="Events Per Day">
+          <h3>Events Per Day</h3>
+          <canvas id="eventsPerDayChart"></canvas>
+        </section>
+        <section role="region" aria-label="Conversion Funnel">
+          <h3>Conversion Funnel</h3>
+          <canvas id="conversionFunnelChart"></canvas>
+        </section>
+        <section role="region" aria-label="User Retention">
+          <h3>User Retention</h3>
+          <canvas id="retentionChart"></canvas>
+        </section>
+      </div>
+    </main>
+    <footer class="site-footer">
+      <div class="footer-content">
+        <div class="footer-brand">
+          <span class="footer-logo">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="32"
+              height="32"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <rect x="3" y="3" width="18" height="18" rx="4" />
+              <path d="M7 7h10v10H7z" />
+            </svg>
+          </span>
+          <span>CleverTap Firebase</span>
+        </div>
+        <div class="footer-social">
+          <a
+            href="https://github.com/vatsal594"
+            target="_blank"
+            title="GitHub"
+            class="footer-icon"
+          >
+            <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+              <path
+                d="M12 2C6.48 2 2 6.58 2 12.26c0 4.5 2.87 8.32 6.84 9.67.5.09.68-.22.68-.48 0-.24-.01-.87-.01-1.7-2.78.62-3.37-1.36-3.37-1.36-.45-1.18-1.1-1.5-1.1-1.5-.9-.63.07-.62.07-.62 1 .07 1.53 1.05 1.53 1.05.89 1.56 2.34 1.11 2.91.85.09-.66.35-1.11.63-1.37-2.22-.26-4.56-1.14-4.56-5.07 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.3.1-2.7 0 0 .84-.28 2.75 1.05A9.38 9.38 0 0 1 12 6.84c.85.004 1.71.12 2.51.35 1.91-1.33 2.75-1.05 2.75-1.05.55 1.4.2 2.44.1 2.7.64.72 1.03 1.63 1.03 2.75 0 3.94-2.34 4.81-4.57 5.07.36.32.68.94.68 1.9 0 1.37-.01 2.47-.01 2.81 0 .27.18.58.69.48A10.01 10.01 0 0 0 22 12.26C22 6.58 17.52 2 12 2z"
+              />
+            </svg>
+          </a>
+          <a
+            href="https://www.linkedin.com/in/vatsalsavanicodes"
+            target="_blank"
+            title="LinkedIn"
+            class="footer-icon"
+          >
+            <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+              <path
+                d="M19 0h-14c-2.76 0-5 2.24-5 5v14c0 2.76 2.24 5 5 5h14c2.76 0 5-2.24 5-5v-14c0-2.76-2.24-5-5-5zm-11 19h-3v-9h3v9zm-1.5-10.28c-.97 0-1.75-.79-1.75-1.75s.78-1.75 1.75-1.75 1.75.79 1.75 1.75-.78 1.75-1.75 1.75zm15.5 10.28h-3v-4.5c0-1.08-.02-2.47-1.5-2.47-1.5 0-1.73 1.17-1.73 2.39v4.58h-3v-9h2.89v1.23h.04c.4-.75 1.38-1.54 2.84-1.54 3.04 0 3.6 2 3.6 4.59v4.72z"
+              />
+            </svg>
+          </a>
+          <a
+            href="https://www.instagram.com/vatssal.savani_"
+            target="_blank"
+            title="Instagram"
+            class="footer-icon"
+          >
+            <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+              <path
+                d="M7.75 2h8.5A5.75 5.75 0 0 1 22 7.75v8.5A5.75 5.75 0 0 1 16.25 22h-8.5A5.75 5.75 0 0 1 2 16.25v-8.5A5.75 5.75 0 0 1 7.75 2zm0 1.5A4.25 4.25 0 0 0 3.5 7.75v8.5A4.25 4.25 0 0 0 7.75 20.5h8.5A4.25 4.25 0 0 0 20.5 16.25v-8.5A4.25 4.25 0 0 0 16.25 3.5h-8.5zm4.25 3.25a5.25 5.25 0 1 1 0 10.5 5.25 5.25 0 0 1 0-10.5zm0 1.5a3.75 3.75 0 1 0 0 7.5 3.75 3.75 0 0 0 0-7.5zm6.25 1.25a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"
+              />
+            </svg>
+          </a>
+          <a
+            href="https://mail.google.com/mail/?view=cm&to=vatsalsavanicodes@gmail.com"
+            target="_blank"
+            title="Email"
+            class="footer-icon"
+          >
+            <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+              <path
+                d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 2v.01L12 13 4 6.01V6h16zm0 12H4V8.99l8 6.99 8-6.99V18z"
+              />
+            </svg>
+          </a>
+        </div>
+        <div class="footer-bottom">
+          <span>&copy; 2024 CleverTap Firebase Dashboard</span>
+          <span
+            >Made with <span class="footer-heart">❤</span> by Vatsal
+            Savani</span
+          >
+        </div>
+      </div>
+    </footer>
+    <button
+      id="onboarding-help"
+      class="onboarding-help"
+      title="Show onboarding"
+    >
+      ❓
+    </button>
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-messaging-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-analytics-compat.js"></script>
+    <script src="js/firebase-config.js"></script>
+    <script src="js/analytics.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <script>
+      // Highlight active nav link
+      const navLinks = document.querySelectorAll(".navbar-center a");
+      navLinks.forEach((link) => {
+        if (window.location.pathname.endsWith(link.getAttribute("href"))) {
+          link.classList.add("active");
+        }
+      });
+      // Hamburger menu logic
+      const navbarToggle = document.getElementById("navbar-toggle");
+      const navbarCenter = document.querySelector(".navbar-center");
+      navbarToggle.addEventListener("change", function () {
+        navbarCenter.classList.toggle("show", this.checked);
+      });
+      // Show analytics welcome banner for first-time users
+      if (!localStorage.getItem("analytics-visited")) {
+        const banner = document.getElementById("analytics-welcome-banner");
+        if (banner) banner.style.display = "block";
+        localStorage.setItem("analytics-visited", "true");
+      }
+      // Floating Help Button Logic
+      const helpFab = document.getElementById("help-fab");
+      const helpModal = document.getElementById("help-modal");
+      const helpClose = document.getElementById("help-close");
+      if (helpFab && helpModal && helpClose) {
+        helpFab.onclick = () => {
+          helpModal.style.display = "flex";
+        };
+        helpClose.onclick = () => {
+          helpModal.style.display = "none";
+        };
+        helpModal.onclick = (e) => {
+          if (e.target === helpModal) helpModal.style.display = "none";
+        };
+      }
+    </script>
+  </body>
+</html>

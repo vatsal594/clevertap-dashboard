@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard - CleverTap Firebase Dashboard</title>
+    <link rel="stylesheet" href="css/styles.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=Roboto:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
+    <link rel="icon" type="image/svg+xml" href="css/favicon.svg" />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css"
+    />
+  </head>
+  <body>
+    <div id="global-loading-spinner"><div class="global-spinner"></div></div>
+    <nav class="navbar">
+      <div class="navbar-left">
+        <span class="logo">
+          <span class="material-icons" style="vertical-align: middle"
+            >dashboard</span
+          >
+          CleverTap Firebase
+        </span>
+      </div>
+      <input type="checkbox" id="navbar-toggle" class="navbar-toggle" />
+      <label for="navbar-toggle" class="navbar-burger">
+        <span class="material-icons">menu</span>
+      </label>
+      <div class="navbar-center">
+        <a href="index.html"><span class="material-icons">home</span> Home</a>
+        <a href="auth.html" class="auth-only"
+          ><span class="material-icons">login</span> Auth</a
+        >
+        <a href="dashboard.html"
+          ><span class="material-icons">space_dashboard</span> Dashboard</a
+        >
+        <a href="analytics.html"
+          ><span class="material-icons">analytics</span> Analytics</a
+        >
+        <a href="campaigns.html"
+          ><span class="material-icons">campaign</span> Campaigns</a
+        >
+        <a href="segmentation.html"
+          ><span class="material-icons">group</span> Segmentation</a
+        >
+        <a href="admin.html"
+          ><span class="material-icons">admin_panel_settings</span> Admin
+          Panel</a
+        >
+      </div>
+      <div class="navbar-right">
+        <!-- Profile dropdown removed -->
+      </div>
+    </nav>
+    <main>
+      <!-- Onboarding Checklist Widget -->
+      <div
+        id="onboarding-checklist"
+        class="onboarding-checklist"
+        style="display: none"
+      >
+        <div class="onboarding-checklist-header">
+          <span class="material-icons" style="vertical-align: middle"
+            >check_circle</span
+          >
+          <span style="font-weight: 600">Getting Started</span>
+          <button
+            id="onboarding-checklist-close"
+            title="Dismiss"
+            class="onboarding-checklist-close"
+          >
+            &times;
+          </button>
+        </div>
+        <ul class="onboarding-checklist-list">
+          <li id="check-profile">
+            <span class="material-icons">person</span> Complete your profile
+            <span class="checkmark"></span>
+          </li>
+          <li id="check-event">
+            <span class="material-icons">track_changes</span> Track your first
+            event <span class="checkmark"></span>
+          </li>
+          <li id="check-analytics">
+            <span class="material-icons">analytics</span> Explore analytics
+            <span class="checkmark"></span>
+          </li>
+          <li id="check-campaign">
+            <span class="material-icons">campaign</span> Create your first
+            campaign <span class="checkmark"></span>
+          </li>
+          <li id="check-segment">
+            <span class="material-icons">group</span> Create your first segment
+            <span class="checkmark"></span>
+          </li>
+        </ul>
+      </div>
+      <!-- Onboarding Modal -->
+      <div
+        id="onboarding-modal"
+        class="onboarding-modal"
+        style="display: none"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="onboarding-title"
+        tabindex="-1"
+      >
+        <div class="onboarding-modal-content">
+          <button
+            class="onboarding-close"
+            id="onboarding-close"
+            title="Close"
+            aria-label="Close Onboarding"
+          >
+            &times;
+          </button>
+          <h2 id="onboarding-title">Welcome to CleverTap Firebase!</h2>
+          <div id="onboarding-progress" class="onboarding-progress">
+            <div class="onboarding-step" data-step="1">
+              <span class="step-number">1</span> Complete your profile
+              <span class="step-status" id="step1-status"></span>
+            </div>
+            <div class="onboarding-step" data-step="2">
+              <span class="step-number">2</span> Track your first event
+              <span class="step-status" id="step2-status"></span>
+            </div>
+            <div class="onboarding-step" data-step="3">
+              <span class="step-number">3</span> Explore analytics
+              <span class="step-status" id="step3-status"></span>
+            </div>
+          </div>
+          <div id="onboarding-content" class="onboarding-content">
+            <!-- Step content will be injected here -->
+          </div>
+          <div class="onboarding-actions">
+            <button id="onboarding-next" class="onboarding-next">Next</button>
+          </div>
+        </div>
+      </div>
+      <button
+        id="onboarding-help"
+        class="onboarding-help"
+        title="Show onboarding"
+      >
+        ❓
+      </button>
+      <div class="main-content">
+        <button id="logout-btn" class="cta-btn" aria-label="Logout">
+          Logout
+        </button>
+        <div
+          id="whats-next-banner"
+          class="contextual-banner"
+          style="display: none; margin-bottom: 1.2em"
+        >
+          <span
+            >What’s next? Try creating a
+            <a href="campaigns.html">campaign</a> or a
+            <a href="segmentation.html">segment</a> to engage your users!</span
+          >
+        </div>
+        <h2>
+          <span class="material-icons" style="vertical-align: middle"
+            >space_dashboard</span
+          >
+          Dashboard
+        </h2>
+        <section id="profile-info">
+          <!-- User profile info will be loaded here -->
+        </section>
+        <section id="engagement-stats">
+          <!-- Recent engagement stats will be shown here -->
+        </section>
+        <section id="event-tracker" role="region" aria-label="Event Tracker">
+          <h3>
+            <span class="material-icons" style="vertical-align: middle"
+              >track_changes</span
+            >
+            Event Tracker
+          </h3>
+          <button data-event="button_click" class="cta-btn">
+            <span class="material-icons" style="color: #fff">touch_app</span>
+            Button Click
+          </button>
+          <button data-event="page_view" class="cta-btn">
+            <span class="material-icons" style="color: #fff">visibility</span>
+            Page View
+          </button>
+          <button data-event="product_view" class="cta-btn">
+            <span class="material-icons" style="color: #fff"
+              >shopping_cart</span
+            >
+            Product View
+          </button>
+        </section>
+      </div>
+    </main>
+    <footer class="site-footer">
+      <div class="footer-content">
+        <div class="footer-brand">
+          <span class="footer-logo">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="32"
+              height="32"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <rect x="3" y="3" width="18" height="18" rx="4" />
+              <path d="M7 7h10v10H7z" />
+            </svg>
+          </span>
+          <span>CleverTap Firebase</span>
+        </div>
+        <div class="footer-social">
+          <a
+            href="https://github.com/vatsal594"
+            target="_blank"
+            title="GitHub"
+            class="footer-icon"
+          >
+            <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+              <path
+                d="M12 2C6.48 2 2 6.58 2 12.26c0 4.5 2.87 8.32 6.84 9.67.5.09.68-.22.68-.48 0-.24-.01-.87-.01-1.7-2.78.62-3.37-1.36-3.37-1.36-.45-1.18-1.1-1.5-1.1-1.5-.9-.63.07-.62.07-.62 1 .07 1.53 1.05 1.53 1.05.89 1.56 2.34 1.11 2.91.85.09-.66.35-1.11.63-1.37-2.22-.26-4.56-1.14-4.56-5.07 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.3.1-2.7 0 0 .84-.28 2.75 1.05A9.38 9.38 0 0 1 12 6.84c.85.004 1.71.12 2.51.35 1.91-1.33 2.75-1.05 2.75-1.05.55 1.4.2 2.44.1 2.7.64.72 1.03 1.63 1.03 2.75 0 3.94-2.34 4.81-4.57 5.07.36.32.68.94.68 1.9 0 1.37-.01 2.47-.01 2.81 0 .27.18.58.69.48A10.01 10.01 0 0 0 22 12.26C22 6.58 17.52 2 12 2z"
+              />
+            </svg>
+          </a>
+          <a
+            href="https://www.linkedin.com/in/vatsalsavanicodes"
+            target="_blank"
+            title="LinkedIn"
+            class="footer-icon"
+          >
+            <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+              <path
+                d="M19 0h-14c-2.76 0-5 2.24-5 5v14c0 2.76 2.24 5 5 5h14c2.76 0 5-2.24 5-5v-14c0-2.76-2.24-5-5-5zm-11 19h-3v-9h3v9zm-1.5-10.28c-.97 0-1.75-.79-1.75-1.75s.78-1.75 1.75-1.75 1.75.79 1.75 1.75-.78 1.75-1.75 1.75zm15.5 10.28h-3v-4.5c0-1.08-.02-2.47-1.5-2.47-1.5 0-1.73 1.17-1.73 2.39v4.58h-3v-9h2.89v1.23h.04c.4-.75 1.38-1.54 2.84-1.54 3.04 0 3.6 2 3.6 4.59v4.72z"
+              />
+            </svg>
+          </a>
+          <a
+            href="https://www.instagram.com/vatssal.savani_"
+            target="_blank"
+            title="Instagram"
+            class="footer-icon"
+          >
+            <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+              <path
+                d="M7.75 2h8.5A5.75 5.75 0 0 1 22 7.75v8.5A5.75 5.75 0 0 1 16.25 22h-8.5A5.75 5.75 0 0 1 2 16.25v-8.5A5.75 5.75 0 0 1 7.75 2zm0 1.5A4.25 4.25 0 0 0 3.5 7.75v8.5A4.25 4.25 0 0 0 7.75 20.5h8.5A4.25 4.25 0 0 0 20.5 16.25v-8.5A4.25 4.25 0 0 0 16.25 3.5h-8.5zm4.25 3.25a5.25 5.25 0 1 1 0 10.5 5.25 5.25 0 0 1 0-10.5zm0 1.5a3.75 3.75 0 1 0 0 7.5 3.75 3.75 0 0 0 0-7.5zm6.25 1.25a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"
+              />
+            </svg>
+          </a>
+          <a
+            href="https://mail.google.com/mail/?view=cm&to=vatsalsavanicodes@gmail.com"
+            target="_blank"
+            title="Email"
+            class="footer-icon"
+          >
+            <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+              <path
+                d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 2v.01L12 13 4 6.01V6h16zm0 12H4V8.99l8 6.99 8-6.99V18z"
+              />
+            </svg>
+          </a>
+        </div>
+        <div class="footer-bottom">
+          <span>&copy; 2024 CleverTap Firebase Dashboard</span>
+          <span
+            >Made with <span class="footer-heart">❤</span> by Vatsal
+            Savani</span
+          >
+        </div>
+      </div>
+    </footer>
+    <script>
+      // Highlight active nav link
+      const navLinks = document.querySelectorAll(".navbar-center a");
+      navLinks.forEach((link) => {
+        if (window.location.pathname.endsWith(link.getAttribute("href"))) {
+          link.classList.add("active");
+        }
+      });
+      // Profile dropdown logic
+      // (Removed)
+      // Hamburger menu logic
+      const navbarToggle = document.getElementById("navbar-toggle");
+      const navbarCenter = document.querySelector(".navbar-center");
+      navbarToggle.addEventListener("change", function () {
+        navbarCenter.classList.toggle("show", this.checked);
+      });
+      // Floating Help Button Logic
+      // (Removed)
+      // Accessibility: Close modals with Escape, focus trap
+      function trapFocus(modal) {
+        const focusable = modal.querySelectorAll(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        );
+        if (!focusable.length) return;
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        modal.addEventListener("keydown", function (e) {
+          if (e.key === "Tab") {
+            if (e.shiftKey) {
+              if (document.activeElement === first) {
+                e.preventDefault();
+                last.focus();
+              }
+            } else {
+              if (document.activeElement === last) {
+                e.preventDefault();
+                first.focus();
+              }
+            }
+          }
+        });
+      }
+      // Onboarding modal accessibility
+      const onboardingModal = document.getElementById("onboarding-modal");
+      if (onboardingModal) {
+        onboardingModal.addEventListener("keydown", function (e) {
+          if (e.key === "Escape") onboardingModal.style.display = "none";
+        });
+        onboardingModal.addEventListener("transitionend", function () {
+          if (onboardingModal.style.display === "flex") onboardingModal.focus();
+        });
+        trapFocus(onboardingModal);
+      }
+      // Help modal accessibility
+      // (Removed)
+    </script>
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-messaging-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-analytics-compat.js"></script>
+    <script src="js/firebase-config.js"></script>
+    <script src="js/dashboard.js"></script>
+    <script src="js/tracking.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <script>
+      // Show 'What’s Next?' banner if onboarding is complete
+      function showWhatsNextBanner() {
+        const allDone =
+          localStorage.getItem("onboarding-profile") === "true" &&
+          localStorage.getItem("event-tracked") === "true" &&
+          localStorage.getItem("analytics-visited") === "true" &&
+          localStorage.getItem("campaign-created") === "true" &&
+          localStorage.getItem("segment-created") === "true";
+        if (allDone) {
+          const banner = document.getElementById("whats-next-banner");
+          if (banner) banner.style.display = "block";
+        }
+      }
+      showWhatsNextBanner();
+      // Confetti animation for onboarding completion
+      function launchConfetti() {
+        const confetti = document.createElement("canvas");
+        confetti.id = "confetti-canvas";
+        confetti.style.position = "fixed";
+        confetti.style.top = 0;
+        confetti.style.left = 0;
+        confetti.style.width = "100vw";
+        confetti.style.height = "100vh";
+        confetti.style.pointerEvents = "none";
+        confetti.style.zIndex = 30000;
+        document.body.appendChild(confetti);
+        const ctx = confetti.getContext("2d");
+        const W = window.innerWidth,
+          H = window.innerHeight;
+        confetti.width = W;
+        confetti.height = H;
+        const particles = Array.from({ length: 80 }, () => ({
+          x: Math.random() * W,
+          y: Math.random() * -H,
+          r: 6 + Math.random() * 8,
+          d: 2 + Math.random() * 2,
+          color: `hsl(${Math.random() * 360},90%,60%)`,
+          tilt: Math.random() * 10 - 5,
+        }));
+        let angle = 0;
+        function draw() {
+          ctx.clearRect(0, 0, W, H);
+          angle += 0.01;
+          for (let p of particles) {
+            p.y += p.d;
+            p.x += Math.sin(angle) * 2;
+            p.tilt += Math.random() - 0.5;
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.r, 0, 2 * Math.PI);
+            ctx.fillStyle = p.color;
+            ctx.globalAlpha = 0.8;
+            ctx.fill();
+          }
+        }
+        let frame = 0;
+        function animate() {
+          draw();
+          frame++;
+          if (frame < 90) requestAnimationFrame(animate);
+          else confetti.remove();
+        }
+        animate();
+      }
+      // Trigger confetti when onboarding is completed (only once)
+      if (
+        localStorage.getItem("onboarding-complete") === "true" &&
+        !localStorage.getItem("confetti-shown")
+      ) {
+        launchConfetti();
+        localStorage.setItem("confetti-shown", "true");
+      }
+    </script>
+  </body>
+</html>

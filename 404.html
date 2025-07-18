@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>404 Not Found - CleverTap Firebase Dashboard</title>
+    <link rel="stylesheet" href="css/styles.css" />
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        background: #f6f8fc;
+        margin: 0;
+      }
+      .notfound-container {
+        text-align: center;
+      }
+      .notfound-404 {
+        font-size: 7em;
+        font-weight: 900;
+        color: var(--primary, #1976d2);
+        margin-bottom: 0.2em;
+      }
+      .notfound-message {
+        font-size: 1.5em;
+        color: var(--primary-dark, #232946);
+        margin-bottom: 1.2em;
+      }
+      .notfound-btn {
+        background: var(--primary, #1976d2);
+        color: #fff;
+        border: none;
+        border-radius: 7px;
+        padding: 0.8em 2em;
+        font-size: 1.1em;
+        font-weight: 600;
+        cursor: pointer;
+        box-shadow: 0 2px 8px rgba(25, 118, 210, 0.1);
+        transition: background 0.18s;
+      }
+      .notfound-btn:hover {
+        background: var(--primary-dark, #232946);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="notfound-container">
+      <div class="notfound-404">404</div>
+      <div class="notfound-message">
+        Oops! The page you’re looking for doesn’t exist.
+      </div>
+      <button
+        class="notfound-btn"
+        onclick="window.location.href='dashboard.html'"
+      >
+        <span class="material-icons" style="vertical-align: middle">home</span>
+        Go to Dashboard
+      </button>
+    </div>
+  </body>
+</html>
