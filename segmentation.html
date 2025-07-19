@@ -21,7 +21,6 @@
     />
   </head>
   <body>
-    <div id="global-loading-spinner"><div class="global-spinner"></div></div>
     <nav class="navbar">
       <div class="navbar-left">
         <span class="logo">
@@ -31,10 +30,6 @@
           CleverTap Firebase
         </span>
       </div>
-      <input type="checkbox" id="navbar-toggle" class="navbar-toggle" />
-      <label for="navbar-toggle" class="navbar-burger">
-        <span class="material-icons">menu</span>
-      </label>
       <div class="navbar-center">
         <a href="index.html"><span class="material-icons">home</span> Home</a>
         <a href="auth.html" class="auth-only"
@@ -57,32 +52,34 @@
           Panel</a
         >
       </div>
-      <div class="navbar-right">
-        <!-- Profile dropdown removed -->
-      </div>
     </nav>
     <main>
       <div class="main-content">
-        <div
-          id="segments-get-started"
-          class="contextual-banner"
-          style="display: none; margin-bottom: 1.2em"
-        >
-          <span
-            >Welcome! Create your first segment to target specific users.
-            🧩</span
-          >
-        </div>
-        <!-- <h2>Segmentation</h2> -->
         <section>
-          <h2>Create Segment</h2>
-          <form id="segment-form">
-            <div id="query-builder">
-              <div class="query-condition-row">
-                <select
-                  class="query-attribute"
+          <div class="card segment-form-card">
+            <h2>Create Segment</h2>
+            <form id="segment-form" autocomplete="off">
+              <div class="form-group">
+                <label for="segment-name">Segment Name</label>
+                <input
+                  type="text"
+                  id="segment-name"
+                  class="segment-name"
+                  placeholder="e.g. Delhi Males"
                   required
-                  title="Select a user attribute to filter by"
+                  maxlength="50"
+                  aria-describedby="segment-name-help"
+                />
+                <small id="segment-name-help" class="form-text"
+                  >Give your segment a descriptive name.</small
+                >
+              </div>
+              <div class="form-group">
+                <label for="segment-attribute">Attribute</label>
+                <select
+                  id="segment-attribute"
+                  required
+                  aria-describedby="segment-attribute-help"
                 >
                   <option value="">Select attribute</option>
                   <option value="gender">Gender</option>
@@ -91,44 +88,48 @@
                   <option value="email">Email</option>
                   <option value="name">Name</option>
                 </select>
-                <span style="margin: 0 0.3em">=</span>
+                <small id="segment-attribute-help" class="form-text"
+                  >Choose which user attribute to filter by.</small
+                >
+              </div>
+              <div class="form-group">
+                <label for="segment-value">Value</label>
                 <input
                   type="text"
-                  class="query-value"
-                  placeholder="Value"
+                  id="segment-value"
+                  placeholder="e.g. Male, Delhi, Sports"
                   required
-                  style="width: 120px"
-                  title="Enter the value for the selected attribute"
+                  maxlength="50"
+                  aria-describedby="segment-value-help"
                 />
-                <button
-                  type="button"
-                  class="remove-condition-btn"
-                  style="display: none"
-                  title="Remove condition"
+                <small id="segment-value-help" class="form-text"
+                  >Enter the value for the selected attribute.</small
                 >
-                  &times;
-                </button>
               </div>
-            </div>
-            <button
-              type="button"
-              id="add-condition-btn"
-              style="margin-top: 0.7em"
-            >
-              + Add Condition
-            </button>
-            <div
-              id="live-user-count"
-              style="margin: 0.8em 0 0.5em 0; color: #1976d2; font-weight: 600"
-            ></div>
-            <button type="submit" class="cta-btn" style="margin-top: 0.7em">
-              Create Segment
-            </button>
+              <div id="live-user-count" class="live-user-count"></div>
+              <div class="form-actions">
+                <button type="submit" class="cta-btn" id="create-segment-btn">
+                  <span id="create-segment-btn-text">Create Segment</span>
+                  <span
+                    id="create-segment-spinner"
+                    class="spinner"
+                    style="display: none"
+                  ></span>
+                </button>
+                <button type="reset" class="secondary-btn">Clear</button>
+              </div>
+              <div
+                id="form-feedback"
+                class="form-feedback"
+                aria-live="polite"
+              ></div>
+            </form>
             <div
               id="query-builder-tooltip"
-              style="font-size: 0.97em; color: #789; margin-top: 0.5em"
+              class="form-text"
+              style="margin-top: 0.5em"
             ></div>
-          </form>
+          </div>
         </section>
         <section id="segment-list">
           <h3>All Segments</h3>
@@ -164,49 +165,61 @@
             target="_blank"
             title="GitHub"
             class="footer-icon"
-          >
-            <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+            ><svg
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              width="24"
+              height="24"
+            >
               <path
                 d="M12 2C6.48 2 2 6.58 2 12.26c0 4.5 2.87 8.32 6.84 9.67.5.09.68-.22.68-.48 0-.24-.01-.87-.01-1.7-2.78.62-3.37-1.36-3.37-1.36-.45-1.18-1.1-1.5-1.1-1.5-.9-.63.07-.62.07-.62 1 .07 1.53 1.05 1.53 1.05.89 1.56 2.34 1.11 2.91.85.09-.66.35-1.11.63-1.37-2.22-.26-4.56-1.14-4.56-5.07 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.3.1-2.7 0 0 .84-.28 2.75 1.05A9.38 9.38 0 0 1 12 6.84c.85.004 1.71.12 2.51.35 1.91-1.33 2.75-1.05 2.75-1.05.55 1.4.2 2.44.1 2.7.64.72 1.03 1.63 1.03 2.75 0 3.94-2.34 4.81-4.57 5.07.36.32.68.94.68 1.9 0 1.37-.01 2.47-.01 2.81 0 .27.18.58.69.48A10.01 10.01 0 0 0 22 12.26C22 6.58 17.52 2 12 2z"
-              />
-            </svg>
-          </a>
+              /></svg
+          ></a>
           <a
             href="https://www.linkedin.com/in/vatsalsavanicodes"
             target="_blank"
             title="LinkedIn"
             class="footer-icon"
-          >
-            <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+            ><svg
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              width="24"
+              height="24"
+            >
               <path
                 d="M19 0h-14c-2.76 0-5 2.24-5 5v14c0 2.76 2.24 5 5 5h14c2.76 0 5-2.24 5-5v-14c0-2.76-2.24-5-5-5zm-11 19h-3v-9h3v9zm-1.5-10.28c-.97 0-1.75-.79-1.75-1.75s.78-1.75 1.75-1.75 1.75.79 1.75 1.75-.78 1.75-1.75 1.75zm15.5 10.28h-3v-4.5c0-1.08-.02-2.47-1.5-2.47-1.5 0-1.73 1.17-1.73 2.39v4.58h-3v-9h2.89v1.23h.04c.4-.75 1.38-1.54 2.84-1.54 3.04 0 3.6 2 3.6 4.59v4.72z"
-              />
-            </svg>
-          </a>
+              /></svg
+          ></a>
           <a
             href="https://www.instagram.com/vatssal.savani_"
             target="_blank"
             title="Instagram"
             class="footer-icon"
-          >
-            <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+            ><svg
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              width="24"
+              height="24"
+            >
               <path
                 d="M7.75 2h8.5A5.75 5.75 0 0 1 22 7.75v8.5A5.75 5.75 0 0 1 16.25 22h-8.5A5.75 5.75 0 0 1 2 16.25v-8.5A5.75 5.75 0 0 1 7.75 2zm0 1.5A4.25 4.25 0 0 0 3.5 7.75v8.5A4.25 4.25 0 0 0 7.75 20.5h8.5A4.25 4.25 0 0 0 20.5 16.25v-8.5A4.25 4.25 0 0 0 16.25 3.5h-8.5zm4.25 3.25a5.25 5.25 0 1 1 0 10.5 5.25 5.25 0 0 1 0-10.5zm0 1.5a3.75 3.75 0 1 0 0 7.5 3.75 3.75 0 0 0 0-7.5zm6.25 1.25a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"
-              />
-            </svg>
-          </a>
+              /></svg
+          ></a>
           <a
             href="https://mail.google.com/mail/?view=cm&to=vatsalsavanicodes@gmail.com"
             target="_blank"
             title="Email"
             class="footer-icon"
-          >
-            <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+            ><svg
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              width="24"
+              height="24"
+            >
               <path
                 d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 2v.01L12 13 4 6.01V6h16zm0 12H4V8.99l8 6.99 8-6.99V18z"
-              />
-            </svg>
-          </a>
+              /></svg
+          ></a>
         </div>
         <div class="footer-bottom">
           <span>&copy; 2024 CleverTap Firebase Dashboard</span>
@@ -217,14 +230,6 @@
         </div>
       </div>
     </footer>
-    <button
-      id="onboarding-help"
-      class="onboarding-help"
-      title="Show onboarding"
-    >
-      ❓
-    </button>
-    <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore-compat.js"></script>
@@ -233,49 +238,6 @@
     <script src="js/firebase-config.js"></script>
     <script src="js/segmentation.js"></script>
     <script src="js/utils.js"></script>
-    <script>
-      // Highlight active nav link
-      const navLinks = document.querySelectorAll(".navbar-center a");
-      navLinks.forEach((link) => {
-        if (window.location.pathname.endsWith(link.getAttribute("href"))) {
-          link.classList.add("active");
-        }
-      });
-      // Hamburger menu logic
-      const navbarToggle = document.getElementById("navbar-toggle");
-      const navbarCenter = document.querySelector(".navbar-center");
-      navbarToggle.addEventListener("change", function () {
-        navbarCenter.classList.toggle("show", this.checked);
-      });
-      // Show get started banner for first-time segment users
-      if (!localStorage.getItem("segment-created")) {
-        const banner = document.getElementById("segments-get-started");
-        if (banner) banner.style.display = "block";
-      }
-      // Floating Help Button Logic
-      const helpFab = document.getElementById("help-fab");
-      const helpModal = document.getElementById("help-modal");
-      const helpClose = document.getElementById("help-close");
-      if (helpFab && helpModal && helpClose) {
-        helpFab.onclick = () => {
-          helpModal.style.display = "flex";
-        };
-        helpClose.onclick = () => {
-          helpModal.style.display = "none";
-        };
-        helpModal.onclick = (e) => {
-          if (e.target === helpModal) helpModal.style.display = "none";
-        };
-      }
-    </script>
-    <script>
-      // REMOVE this block:
-      // window.addEventListener("DOMContentLoaded", function () {
-      //   if (!localStorage.getItem("onboarding-complete")) {
-      //     window.location.href = "dashboard.html";
-      //   }
-      // });
-    </script>
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
   </body>
 </html>

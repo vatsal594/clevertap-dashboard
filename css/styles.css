@@ -2394,3 +2394,190 @@ nav .material-icons {
     max-width: 98vw;
   }
 }
+
+/* --- Improved Card Styling for Create Segment Section --- */
+.card.segment-form-card {
+  max-width: 440px;
+  margin: 2.5em auto 2em auto;
+  background: var(--surface, #fff);
+  border-radius: 18px;
+  box-shadow: 0 6px 32px rgba(25, 118, 210, 0.1),
+    0 1.5px 6px rgba(25, 118, 210, 0.07);
+  border: 1.5px solid var(--border, #e3e8ee);
+  padding: 2.2em 2.2em 1.7em 2.2em;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+.card.segment-form-card h2 {
+  margin-top: 0;
+  margin-bottom: 1.3em;
+  font-size: 1.45em;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  color: var(--primary, #1976d2);
+  text-align: center;
+}
+.form-group {
+  margin-bottom: 1.4em;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3em;
+}
+.form-group label {
+  font-weight: 500;
+  margin-bottom: 0.1em;
+  color: var(--text, #9f3c3c);
+}
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 0.85em 1.1em;
+  border: 1.5px solid var(--border, #e3e8ee);
+  border-radius: 8px;
+  font-size: 1.05em;
+  font-family: inherit;
+  background: var(--background, #f5f7fa);
+  color: var(--text, #222);
+  transition: border 0.2s;
+  box-sizing: border-box;
+}
+.form-group input:focus,
+.form-group select:focus {
+  border-color: var(--primary, #1976d2);
+  outline: none;
+}
+.form-text {
+  color: var(--muted, #789);
+  font-size: 0.97em;
+  margin-left: 0.1em;
+}
+.form-actions {
+  display: flex;
+  gap: 1.2em;
+  align-items: center;
+  margin-top: 1.2em;
+  justify-content: flex-end;
+}
+.cta-btn,
+.secondary-btn {
+  min-width: 120px;
+}
+@media (max-width: 600px) {
+  .card.segment-form-card {
+    margin: 1em;
+    padding: 1.1em 0.7em 1em 0.7em;
+  }
+  .form-actions {
+    flex-direction: column;
+    gap: 0.7em;
+    align-items: stretch;
+  }
+}
+@media (prefers-color-scheme: dark) {
+  .card.segment-form-card {
+    background: var(--surface, #23293a);
+    border-color: var(--border, #333b4d);
+    box-shadow: 0 6px 32px rgba(25, 118, 210, 0.18),
+      0 1.5px 6px rgba(25, 118, 210, 0.13);
+  }
+  .form-group input,
+  .form-group select {
+    background: #23293a;
+    color: #000000;
+    border-color: #333b4d;
+  }
+}
+
+/* --- Ensure select dropdown matches theme --- */
+.form-group select {
+  background: #fff !important;
+  color: #222 !important;
+}
+@media (prefers-color-scheme: dark) {
+  .form-group select {
+    background: #23293a !important;
+    color: #e3eaf2 !important;
+  }
+}
+
+/* --- Force select dropdown to match theme in all browsers --- */
+.form-group select {
+  background: #fff !important;
+  color: #222 !important;
+  border: 1.5px solid var(--border, #e3e8ee);
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  box-shadow: none;
+}
+@media (prefers-color-scheme: dark) {
+  .form-group select {
+    background: #23293a !important;
+    color: #e3eaf2 !important;
+    border-color: #333b4d;
+  }
+}
+
+/* --- Bulletproof select dropdown styling and custom arrow (final) --- */
+.form-group select {
+  background: #fff !important;
+  background-color: #fff !important;
+  color: #222 !important;
+  border: 1.5px solid var(--border, #e3e8ee);
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  box-shadow: none !important;
+  padding-right: 2.5em;
+  position: relative;
+  z-index: 1;
+  transition: background 0.2s, color 0.2s;
+}
+.form-group select:focus,
+.form-group select:active,
+.form-group select:hover {
+  background: #fff !important;
+  background-color: #fff !important;
+  color: #222 !important;
+  outline: 2px solid var(--primary, #1976d2);
+}
+.form-group select::-ms-expand {
+  display: none;
+}
+.form-group::after {
+  content: "";
+  position: absolute;
+  right: 1.2em;
+  top: 50%;
+  width: 1em;
+  height: 1em;
+  pointer-events: none;
+  background: url("data:image/svg+xml;utf8,<svg fill='black' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M7 10l5 5 5-5z'/></svg>")
+    no-repeat center/contain;
+  transform: translateY(-50%);
+  z-index: 2;
+}
+@media (prefers-color-scheme: dark) {
+  .form-group select,
+  .form-group select:focus,
+  .form-group select:active,
+  .form-group select:hover {
+    background: #fff !important;
+    background-color: #fff !important;
+    color: #222 !important;
+    /* border-color: #333b4d; */
+    outline: 2px solid var(--primary, #1976d2);
+  }
+  .form-group::after {
+    background: url("data:image/svg+xml;utf8,<svg fill='white' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M7 10l5 5 5-5z'/></svg>")
+      no-repeat center/contain;
+  }
+}
+@media (forced-colors: active) {
+  .form-group select {
+    forced-color-adjust: none;
+    background: Canvas !important;
+    color: CanvasText !important;
+  }
+}
