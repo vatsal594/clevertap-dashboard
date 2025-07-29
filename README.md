@@ -2,6 +2,8 @@
 
 A Firebase-powered web application replicating core features of CleverTap — including authentication, user segmentation, campaign creation, and analytics — focused on enhancing user engagement through personalized push notifications and data-driven insights.
 
+🔗 **Live Demo:** [https://clevertap-firebase-dashboard.vercel.app](https://clevertap-firebase-dashboard.vercel.app)
+
 ---
 
 ## 🚀 1. Project Summary
@@ -108,22 +110,6 @@ A Firebase-powered web application replicating core features of CleverTap — in
 ## 📝 TL;DR Pitch (For HR / Quick Overview)
 
 > “I built a full-stack Firebase app replicating CleverTap's core features like segmentation, campaigns, analytics, and FCM. It helped me understand how product teams use real-time user data to create personalized push campaigns and track conversions — exactly what CleverTap enables. This gave me a solid foundation for the Customer Success role.”
-
----
-
-## 📂 Folder Structure
-
-📦clevertap-firebase-dashboard
-┣ 📁public/
-┣ 📁src/
-┃ ┣ 📂auth/
-┃ ┣ 📂components/
-┃ ┣ 📂pages/
-┃ ┣ 📂utils/
-┃ ┣ App.js
-┃ ┣ firebaseConfig.js
-┗ index.html 
-
 
 ---
 
