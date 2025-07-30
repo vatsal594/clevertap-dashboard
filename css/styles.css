@@ -1,14 +1,3 @@
-/*
-  New CSS from scratch for CleverTap Firebase Dashboard
-  - Minimal, light, modern theme with blue accents
-  - Single main content container per page
-  - Sticky, minimal navbar and footer
-  - Consistent, beautiful forms, buttons, cards, and sections
-  - Fully responsive for laptop/desktop/mobile
-  - Uses Roboto or system-ui font and Material Icons
-  - Well-commented for maintainability
-*/
-
 @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap");
 
 :root {
@@ -299,6 +288,73 @@ footer {
   font-size: 2em;
   letter-spacing: 0.01em;
 }
+
+/* Segment styles */
+.segment-list-item {
+  background: #fff;
+  border-radius: 8px;
+  padding: 1em;
+  margin-bottom: 1em;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.segment-header {
+  display: flex;
+  align-items: center;
+  gap: 1em;
+  margin-bottom: 0.5em;
+}
+
+.segment-actions {
+  display: flex;
+  gap: 0.5em;
+  margin-top: 0.5em;
+}
+
+.segment-actions button {
+  padding: 0.5em 1em;
+  border-radius: 6px;
+  border: none;
+  background: #1976d2;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.3em;
+}
+
+.segment-actions button:hover {
+  background: #0c5099;
+}
+
+.segment-users-details {
+  margin-top: 1em;
+  padding-top: 1em;
+  border-top: 1px solid #eee;
+}
+
+.user-token {
+  color: #4caf50;
+  font-size: 0.9em;
+}
+
+.no-token {
+  color: #f44336;
+  font-size: 0.9em;
+}
+
+.token-available {
+  color: #4caf50;
+  font-size: 0.85em;
+}
+
+/* Admin panel specific styles */
+.admin-segment-actions {
+  display: flex;
+  gap: 0.5em;
+  flex-wrap: wrap;
+  margin-top: 0.5em;
+}
+
 @media (max-width: 900px) {
   .main-content {
     max-width: 98vw;
@@ -873,7 +929,7 @@ nav .material-icons {
   font-weight: 600;
 }
 #segment-list li span {
-  color: #789;
+  color: rgb(0, 0, 0);
   font-size: 0.98em;
 }
 .view-users-btn {
@@ -2563,6 +2619,19 @@ nav .material-icons {
   transform: translateY(-50%);
   z-index: 2;
 }
+
+.admin-check-users-btn {
+  width: 150px; /* fixed width */
+  height: 40px; /* fixed height */
+  padding: 10px; /* optional: inner spacing */
+  font-size: 16px; /* text size */
+  border: none;
+  border-radius: 8px;
+  background-color: #1565c0;
+  color: white;
+  cursor: pointer;
+}
+
 @media (prefers-color-scheme: dark) {
   .form-group select,
   .form-group select:focus,
@@ -2739,5 +2808,112 @@ nav .material-icons {
     background: var(--primary) !important;
     color: #fff !important;
     padding: 0 !important;
+  }
+}
+
+/* --- Admin Panel: Segment User List Styles --- */
+.admin-segment-user-list {
+  background: #f8fafc;
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgba(25, 118, 210, 0.06);
+  padding: 0.7em 1.2em;
+  margin: 0.7em 0 0.7em 0;
+  font-size: 1em;
+  color: var(--primary-dark);
+  list-style: none;
+  max-width: 100%;
+}
+.admin-segment-user-list-item {
+  border-bottom: 1px solid #e3e8ee;
+  padding: 0.4em 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5em;
+}
+.admin-segment-user-list-item:last-child {
+  border-bottom: none;
+}
+.admin-user-list-name {
+  color: var(--primary-dark);
+  font-weight: 600;
+  margin-right: 0.5em;
+}
+.admin-user-list-email {
+  color: #1976d2;
+  font-size: 0.97em;
+  margin-right: 0.5em;
+}
+.admin-user-list-id {
+  color: #789;
+  font-size: 0.95em;
+}
+@media (max-width: 700px) {
+  .admin-segment-user-list {
+    padding: 0.5em 0.4em;
+    font-size: 0.97em;
+  }
+  .admin-segment-user-list-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.2em;
+    padding: 0.3em 0;
+  }
+}
+
+/* --- Admin Panel: All Segments Section Styles --- */
+#admin-segments ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.1em;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+#admin-segments li {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7em;
+  background: #fff !important;
+  border-radius: 10px;
+  box-shadow: 0 1px 4px rgba(25, 118, 210, 0.06);
+  padding: 1em 1.3em;
+  font-size: 1.08em;
+  transition: box-shadow 0.18s;
+  min-height: 60px;
+  margin-bottom: 1em;
+}
+#admin-segments li:last-child {
+  margin-bottom: 0;
+}
+.admin-segment-header {
+  display: flex;
+  align-items: center;
+  gap: 0.7em;
+  margin-bottom: 0.7em;
+}
+.admin-segment-users {
+  margin-top: 0.5em;
+}
+.admin-segment-users ul {
+  margin-top: 0.3em;
+}
+@media (max-width: 700px) {
+  #admin-segments li {
+    padding: 0.8em 0.7em;
+    font-size: 0.98em;
+  }
+  .admin-segment-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.3em;
+    margin-bottom: 0.5em;
+  }
+  .admin-segment-users {
+    margin-top: 0.3em;
   }
 }

@@ -208,26 +208,74 @@ async function loadAdminPanel() {
         segSnap.forEach((doc) => {
           const s = doc.data();
           html += `<li>
-            <div style='display:flex;align-items:center;gap:0.7em;flex:1 1 0;'>
-              <span class='material-icons' style='color:var(--primary);font-size:1.3em;'>segment</span>
-              <div style='flex:1 1 0;'>
-                <strong style='color:var(--primary-dark);font-size:1.07em;'>${
-                  s.name || ""
-                }</strong>
-                <span class='admin-segment-badge' title='Query'>${
-                  s.query || "-"
-                }</span>
-              </div>
+            <div class='admin-segment-header'>
+              <strong style='color:var(--primary-dark);font-size:1.07em;'>${
+                s.name || ""
+              }</strong>
+              <span class='admin-segment-badge' title='Filters'>${
+                s.filters ? JSON.stringify(s.filters) : s.query || "-"
+              }</span>
+              <span class='admin-segment-user-count'><b>Users:</b> ${
+                s.userCount || 0
+              }</span>
             </div>
-            <div style='display:flex;align-items:center;gap:0.3em;margin-top:0.5em;'>
+            <div class='admin-segment-actions'>
+              <button class='admin-check-users-btn' data-segment-id='${
+                doc.id
+              }'>Check Users</button>
+              <button class='admin-send-segment-notification' data-fcm-tokens='${
+                s.fcmTokens && s.fcmTokens.length ? s.fcmTokens.join(",") : ""
+              }' style='background:var(--primary);color:#fff;border:none;padding:0.4em 1em;border-radius:6px;cursor:pointer;'>Send Notification</button>
               <button class='admin-delete-segment' data-id='${
                 doc.id
               }' aria-label='Delete segment'><span class='material-icons'>delete</span></button>
             </div>
+            <div class='admin-segment-users' id='segment-users-${
+              doc.id
+            }' style='display:none;'><b>User Details:</b> ${
+            s.users && s.users.length
+              ? `<ul style='list-style:none;padding:0;margin:0;'>${s.users
+                  .map(
+                    (u) =>
+                      `<li>${u.name || "(No Name)"} &lt;${
+                        u.email || "-"
+                      }&gt;</li>`
+                  )
+                  .join("")}</ul>`
+              : "-"
+          }</div>
           </li>`;
         });
         html += "</ul>";
         segmentsDiv.innerHTML = html;
+        // Attach event listeners for segment actions after rendering
+        document.querySelectorAll(".admin-check-users-btn").forEach((btn) => {
+          btn.addEventListener("click", function () {
+            const segId = btn.getAttribute("data-segment-id");
+            const usersDiv = document.getElementById("segment-users-" + segId);
+            if (!usersDiv) return;
+            if (usersDiv.style.display === "none") {
+              usersDiv.style.display = "block";
+              btn.textContent = "Hide Users";
+            } else {
+              usersDiv.style.display = "none";
+              btn.textContent = "Check Users";
+            }
+          });
+        });
+        document
+          .querySelectorAll(".admin-send-segment-notification")
+          .forEach((btn) => {
+            btn.addEventListener("click", function () {
+              const tokens = btn.getAttribute("data-fcm-tokens");
+              if (!tokens) {
+                showToast("No FCM tokens for this segment.", "info");
+                return;
+              }
+              console.log("FCM tokens for this segment:", tokens.split(","));
+              showToast("FCM tokens logged to console.", "info");
+            });
+          });
       }
     } catch (error) {
       segmentsDiv.innerHTML =
