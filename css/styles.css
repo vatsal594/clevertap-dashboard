@@ -487,6 +487,8 @@ button:active,
 .cta-btn.cta-secondary:focus {
   background: var(--border);
   color: var(--primary-dark);
+  background-color: #1976d2;
+  color: white;
 }
 
 /* Auth Page Card & Tabs */
